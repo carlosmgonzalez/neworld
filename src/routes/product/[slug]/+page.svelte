@@ -8,33 +8,34 @@
 	import { cartStore } from '../../../store/cart.store';
 
 	const { data }: PageProps = $props();
-	const id = data.slug;
 
-	const product = products.find((p) => p.id === id);
-	const otherProducts = products.filter((p) => p.id !== id);
+	let id = $derived(data.slug);
 
-	const productReviews = reviews.filter((r) => r.productId === id);
+	let product = $derived(products.find((p) => p.id === id));
+	let otherProducts = $derived(products.filter((p) => p.id !== id));
+	let productReviews = $derived(reviews.filter((r) => r.productId === id));
 
 	let quantity = $state(1);
 </script>
 
-<div class="h-28 bg-linear-to-t from-white to-blue-300"></div>
+<div class="absolute h-24 w-full bg-linear-to-t from-transparent to-blue-300"></div>
 <div
-	class="w-full grid grid-cols-1 md:grid-cols-2 bg-white justify-center md:items-start gap-2 px-4 md:px-10 lg:px-26 rounded-b-2xl pb-5 items-center"
+	class="w-full max-w-[1200px] m-auto grid grid-cols-1 md:grid-cols-2 justify-center md:items-start gap-2 pb-5 pt-26 px-4 md:px-6 lg:px-26 rounded-b-2xl items-center"
 >
 	<div class="w-full flex justify-center items-center mb-6 md:mb-0">
 		<img
 			src={`/${product?.imagesUrl[0]}`}
 			alt={product?.description}
-			class="w-[60%] h-auto aspect-square"
+			class="w-[75%] h-auto aspect-square rounded-lg"
+			loading="lazy"
 		/>
 	</div>
 	<div
-		class="w-full flex flex-col px-8 py-4 rounded-lg bg-blue-200/30 backdrop-blur-3xl md:self-start"
+		class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-blue-200/30 backdrop-blur-3xl md:self-start"
 	>
 		<div class="flex justify-between items-center w-full">
 			<h3 class="font-bold text-3xl">{product?.title}</h3>
-			<p class="font-light text-xl text-blue-700">${product?.price}</p>
+			<p class="font-light text-xl">${product?.price}</p>
 		</div>
 		<p class="text-xs text-gray-500">{product?.description}</p>
 		<div class="flex justify-between items-center bg-white rounded-lg px-2 py-1 w-fit gap-5 mt-4">
@@ -84,19 +85,16 @@
 		</p>
 	</div>
 </div>
-<div class="w-full flex flex-col justify-center items-center px-6 md:px-16">
-	<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2">
+<div class="flex-1 flex flex-col px-4 md:px-6 m-auto mt-8 w-full max-w-[1200px]">
+	<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 		{#each otherProducts as product}
 			<ProductCard {product} />
 		{/each}
 	</div>
-</div>
-<div class="w-full flex flex-col justify-center items-center px-6 md:px-16">
-	<div class="w-full flex justify-center items-center p-2">
-		<h3 class="font-bold text-xl">Reviews</h3>
-	</div>
+	<!-- <div class="h-[1px] w-full bg-neutral-300"></div> -->
+	<h3 class="font-bold text-xl text-center mt-5 mb-2">Reviews</h3>
 	{#if productReviews.length > 0}
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
 			{#each productReviews as review}
 				<ReviewsCard {review} />
 			{/each}

@@ -2,6 +2,7 @@
 	import { cartStore } from '../../store/cart.store';
 	import { products } from '../../lib/database/products';
 	import { Minus, Plus, Trash } from '@lucide/svelte';
+	import { text } from '@sveltejs/kit';
 
 	type ProductInCart = {
 		id: string;
@@ -32,91 +33,117 @@
 	});
 </script>
 
-<div class="h-28 bg-linear-to-t from-white to-blue-300"></div>
-<!-- <div class="h-28"></div> -->
-<h1 class="text-2xl font-bold">Carrito</h1>
-<div class="grid grid-cols-1 md:grid-cols-2 px-4 md:px-10 lg:px-36 py-5 gap-4">
-	{#if productsInCart.length > 0}
-		<div class="flex flex-col bg-blue-200/30 backdrop-blur-3xl rounded-lg px-4 py-2 gap-4">
-			{#each productsInCart as product}
-				<div class="flex rounded-lg px-2 py-1 gap-4">
-					<img
-						src={`/${product.imagesUrl[0]}`}
-						alt={product.description}
-						class="w-[200px] h-auto aspect-square rounded-xl"
-					/>
-					<div>
-						<h3 class="font-bold text-lg">{product.title}</h3>
-						<div class="flex gap-2 items-center">
-							<p class="font-light text-sm">Precio:</p>
-							<p class="font-semibold text-sm">${product.price}</p>
-						</div>
-						<div class="flex gap-2">
-							<p class="font-light text-sm">Cantidad:</p>
-							<p class="font-semibold text-sm">{product.quantity}</p>
-						</div>
-						<div class="flex justify-between items-center bg-white rounded-lg px-4 py-1 mt-2">
-							<div class="flex justify-center items-center gap-1">
-								<button
-									class="cursor-pointer"
-									onclick={() => {
-										if (quantity > 1) {
-											quantity -= 1;
-										}
-									}}
-								>
-									<Minus size={16} />
-								</button>
-								<span
-									class="flex justify-center items-center px-2 bg-neutral-200/80 backdrop-blur-3xl rounded-lg"
-									>{quantity}</span
-								>
-								<button
-									class="cursor-pointer"
-									onclick={() => {
-										if (quantity < 10) {
-											quantity += 1;
-										}
-									}}
-								>
-									<Plus size={16} />
-								</button>
+<div class="absolute z-10 w-full h-28 bg-linear-to-t from-trasparente to-blue-300"></div>
+<div class="w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-28">
+	<h1 class="text-2xl font-semibold">Carrito</h1>
+	<a href="/" class="underline"> Seguir comprando </a>
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+		{#if productsInCart.length > 0}
+			<div class="flex flex-col bg-blue-200/30 backdrop-blur-3xl rounded-lg p-4 gap-4 h-fit">
+				{#each productsInCart as product}
+					<div class="grid grid-cols-2 rounded-lg gap-4">
+						<img
+							src={`/${product.imagesUrl[0]}`}
+							alt={product.description}
+							class="h-auto aspect-square rounded-xl"
+						/>
+						<div>
+							<h3 class="font-bold text-lg">{product.title}</h3>
+							<div class="flex gap-2 items-center">
+								<p class="font-light text-sm">Precio:</p>
+								<p class="font-semibold text-sm">${+product.price * product.quantity}</p>
 							</div>
-							<button
-								class="rounded-lg cursor-pointer text-red-700"
-								onclick={() => {
-									cartStore.removeItem(product.id);
-								}}
+							<div class="flex gap-2">
+								<p class="font-light text-sm">Cantidad:</p>
+								<p class="font-semibold text-sm">{product.quantity}</p>
+							</div>
+							<divsd
+								class="flex justify-between items-center gap-5 bg-white rounded-lg px-2 py-1 mt-2 w-fit"
 							>
-								<Trash size={20} />
-							</button>
+								<div class="flex justify-center items-center gap-1">
+									<button
+										class="cursor-pointer"
+										onclick={() => {
+											cartStore.removeOne(product.id);
+										}}
+									>
+										<Minus size={16} />
+									</button>
+									<span
+										class="flex justify-center items-center px-2 bg-neutral-200/80 backdrop-blur-3xl rounded-lg"
+										>{product.quantity}</span
+									>
+									<button
+										class="cursor-pointer"
+										onclick={() => {
+											cartStore.addOne(product.id);
+										}}
+									>
+										<Plus size={16} />
+									</button>
+								</div>
+								<button
+									class="rounded-lg cursor-pointer text-red-700"
+									onclick={() => {
+										cartStore.removeItem(product.id);
+									}}
+								>
+									<Trash size={20} />
+								</button>
+							</divsd>
+							<!-- <div class="flex flex-col justify-center items-center">
+							</div> -->
 						</div>
-						<!-- <div class="flex flex-col justify-center items-center">
-            </div> -->
 					</div>
+				{/each}
+			</div>
+			<div class="flex flex-col bg-white rounded-lg gap-5">
+				<h3 class="font-bold text-lg">Resumen de compra</h3>
+				<div class="flex justify-between items-center">
+					<p class="font-light text-sm">Subtotal:</p>
+					<p class="font-semibold text-sm">
+						${productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0)}
+					</p>
 				</div>
-			{/each}
-		</div>
-		<div class="flex justify-between items-center bg-white rounded-lg px-2 py-1 w-fit gap-5 mt-4">
-			<button
-				class="cursor-pointer"
-				onclick={() => {
-					cartStore.clear();
-				}}
-			>
-				Limpiar carrito
-			</button>
-			<button
-				class="cursor-pointer"
-				onclick={() => {
-					alert('Compra realizada');
-					cartStore.clear();
-				}}
-			>
-				Comprar
-			</button>
-		</div>
-	{:else}
-		<p>No products in cart</p>
-	{/if}
+				<div class="flex justify-between items-center">
+					<p class="font-light text-sm">Impuestos:</p>
+					<p class="font-semibold text-sm">
+						10%
+						<span>
+							( ${productsInCart.reduce(
+								(acc, product) => acc + +product.price * product.quantity,
+								0
+							) * 0.1}
+							)
+						</span>
+					</p>
+				</div>
+				<!-- <div class="flex justify-between items-center">
+					<p
+						class="font-light text-sm"
+					>
+						Envío:
+					</p>
+					<p class="font-semibold text-sm">$0</p>
+				</div> -->
+
+				<div class="flex justify-between items-center">
+					<p class="font-light text-sm">Total:</p>
+					<p class="font-semibold text-sm">
+						${productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0) +
+							productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0) *
+								0.1}
+					</p>
+				</div>
+				<a
+					href="/checkout"
+					class="bg-blue-500 rounded-lg text-white text-center px-4 py-2 mt-4 hover:bg-blue-600 transition-colors duration-300"
+				>
+					Comprar
+				</a>
+			</div>
+		{:else}
+			<p>No products in cart</p>
+		{/if}
+	</div>
 </div>

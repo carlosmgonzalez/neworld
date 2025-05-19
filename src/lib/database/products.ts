@@ -4,7 +4,7 @@ export const products = [
 		imagesUrl: ['images/products/audifonos.jpeg'],
 		title: 'Audifonos',
 		description: 'Audifonos traductores en tiempo real',
-		price: '150.000',
+		price: '150000',
 		quantity: 10
 	},
 	{
@@ -12,7 +12,7 @@ export const products = [
 		imagesUrl: ['images/products/estabilizador1.jpg'],
 		title: 'Estabilizador',
 		description: 'Tripode con carama integrada',
-		price: '90.000',
+		price: '90000',
 		quantity: 8
 	},
 	{
@@ -20,7 +20,7 @@ export const products = [
 		imagesUrl: ['images/products/microfono.jpg'],
 		title: 'Microfonos',
 		description: 'Microfonos con cancelacion de ruido',
-		price: '100.000',
+		price: '100000',
 		quantity: 5
 	}
 ];

@@ -5,7 +5,7 @@
 </script>
 
 <div
-	class="bg-blue-200/30 backdrop-blur-3xl shadow rounded-xl flex flex-col justify-center gap-1 p-2"
+	class="bg-blue-200/30 backdrop-blur-3xl shadow rounded-xl flex flex-col justify-start gap-1 p-2"
 >
 	<h4 class="font-bold self-start">{review.title}</h4>
 	<p class="text-xs text-gray-500">{review.description}</p>

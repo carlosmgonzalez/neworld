@@ -18,6 +18,10 @@ function createCart() {
 		return [];
 	})();
 
+	const saveCart = (cart: CartItem[]) => {
+		localStorage.setItem('cart', JSON.stringify(cart));
+	};
+
 	const { subscribe, set, update } = writable<CartItem[]>(initialCart);
 
 	return {
@@ -31,13 +35,31 @@ function createCart() {
 						)
 					: [...cart, item];
 
-				localStorage.setItem('cart', JSON.stringify(newCart));
+				saveCart(newCart);
 				return newCart;
 			}),
 		removeItem: (productId: string) =>
 			update((cart) => {
 				const newCart = cart.filter((i) => i.productId !== productId);
-				localStorage.setItem('cart', JSON.stringify(newCart));
+				saveCart(newCart);
+				return newCart;
+			}),
+		addOne: (id: string) =>
+			update((cart) => {
+				const newCart: CartItem[] = cart.map((item) =>
+					item.productId === id ? { ...item, quantity: item.quantity + 1 } : item
+				);
+				saveCart(newCart);
+				return newCart;
+			}),
+		removeOne: (id: string) =>
+			update((cart) => {
+				const newCart: CartItem[] = cart.map((item) =>
+					item.productId === id
+						? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
+						: item
+				);
+				saveCart(newCart);
 				return newCart;
 			}),
 		clear: () =>
