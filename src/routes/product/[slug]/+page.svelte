@@ -11,6 +11,15 @@
 
 	let id = $derived(data.slug);
 
+	let isShowAlert = $state(false);
+
+	const showAlert = () => {
+		isShowAlert = true;
+		setTimeout(() => {
+			isShowAlert = false;
+		}, 2000);
+	};
+
 	let product = $derived(products.find((p) => p.id === id));
 	let otherProducts = $derived(products.filter((p) => p.id !== id));
 	let productReviews = $derived(reviews.filter((r) => r.productId === id));
@@ -71,11 +80,18 @@
 				onclick={() => {
 					if (!product) return;
 					cartStore.addItem({ productId: product.id, quantity });
+					showAlert();
+					quantity = 1; // Reset quantity after adding to cart
 				}}
 			>
-				Add to Cart
+				Agregar al carrito
 			</button>
 		</div>
+		{#if isShowAlert}
+			<div class="w-full">
+				<p class="text-center text-sm font-light my-3">Producto agregado</p>
+			</div>
+		{/if}
 		<div class="h-[1px] w-full bg-neutral-200"></div>
 		<p class="text-xs text-gray-500 mt-2">
 			After purchasing a similar adapter online and being very disappointed, I was pleased to
