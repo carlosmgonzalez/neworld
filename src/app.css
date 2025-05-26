@@ -3,8 +3,8 @@
 
 @import 'tailwindcss';
 /* @plugin "@tailwindcss-animate"; */
-/* @plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography'; */
+/* @plugin '@tailwindcss/forms'; */
+/* @plugin '@tailwindcss/typography'; */
 
 @custom-variant dark (&:is(.dark *));
  
@@ -293,15 +293,23 @@
 		background: #fdffa4;
 		color: black;
 	}
+
+	.input-outline-blue {
+		@apply p-2 rounded-lg outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-neutral-200/50
+	}
+
+	.page-container {
+		@apply w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-24
+	}
 }
  
 @layer components {
-	*:not(body):not(.focus-override) {
+	/* *:not(body):not(.focus-override) {
 		outline: none !important;
 		&:focus-visible {
 			@apply focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-1;
 		}
-	}
+	} */
  
 	.link {
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;

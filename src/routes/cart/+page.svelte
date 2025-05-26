@@ -1,70 +1,51 @@
 <script lang="ts">
-	import { cartStore } from '../../store/cart.store';
-	import { products } from '../../lib/database/products';
-	import { Minus, Plus, Trash } from '@lucide/svelte';
-	import { text } from '@sveltejs/kit';
+	import { invalidate } from '$app/navigation';
+	import { cartStore } from '@/store/cart.store';
+	import { Minus, Plus, X } from '@lucide/svelte';
 
-	type ProductInCart = {
-		id: string;
-		title: string;
-		price: string;
-		description: string;
-		imagesUrl: string[];
-		quantity: number;
-	};
-
-	let quantity = $state(0);
-
-	let productsInCart: ProductInCart[] = $state([]);
-
-	cartStore.subscribe((cart) => {
-		productsInCart = cart.map((item) => {
-			const product = products.find((p) => p.id === item.productId);
-
-			return {
-				id: item.productId,
-				title: product!.title,
-				price: product!.price,
-				description: product!.description,
-				imagesUrl: product!.imagesUrl,
-				quantity: item.quantity
-			};
-		});
-	});
+	const { data } = $props();
 </script>
 
-<div class="absolute z-10 w-full h-28 bg-linear-to-t from-trasparente to-blue-300"></div>
-<div class="w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-28">
+{#if data.error}
+	<p>Error to load products</p>
+{/if}
+
+<div class="page-container">
 	<h1 class="text-2xl font-semibold">Carrito</h1>
-	<a href="/" class="underline"> Seguir comprando </a>
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-		{#if productsInCart.length > 0}
-			<div class="flex flex-col bg-blue-200/30 backdrop-blur-3xl rounded-lg p-4 gap-4 h-fit">
-				{#each productsInCart as product}
-					<div class="grid grid-cols-2 rounded-lg gap-4">
+	<a href="/" class="underline text-neutral-500"> Seguir comprando </a>
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+		{#if data.detailedCartItems.length === 0}
+			<p>No hay productos en el carrito</p>
+		{:else}
+			<div
+				class="flex flex-col md:col-span-2 bg-blue-200/50 backdrop-blur-3xl shadow-md rounded-lg p-4 gap-4 h-fit"
+			>
+				{#each data.detailedCartItems as product}
+					<div class="flex flex-row rounded-lg gap-4 items-center">
 						<img
-							src={`/${product.imagesUrl[0]}`}
-							alt={product.description}
-							class="h-auto aspect-square rounded-xl"
+							src={product.images[0]}
+							alt={product.smallDescription}
+							class="w-[150px] h-auto aspect-square rounded-xl shadow-md"
 						/>
-						<div>
-							<h3 class="font-bold text-lg">{product.title}</h3>
-							<div class="flex gap-2 items-center">
-								<p class="font-light text-sm">Precio:</p>
-								<p class="font-semibold text-sm">${+product.price * product.quantity}</p>
+						<div class="w-full flex flex-col justify-between gap-2 md:flex-row md:gap-4">
+							<div class="flex flex-col gap-2 md:gap-4">
+								<h3 class="font-semibold">{product?.name}</h3>
+								<p class="text-xs font-light text-neutral-600">
+									{product.smallDescription}
+								</p>
+								<p class="font-light text-sm text-neutral-600">
+									${+product.price * product.quantity}
+								</p>
 							</div>
-							<div class="flex gap-2">
-								<p class="font-light text-sm">Cantidad:</p>
-								<p class="font-semibold text-sm">{product.quantity}</p>
-							</div>
-							<divsd
-								class="flex justify-between items-center gap-5 bg-white rounded-lg px-2 py-1 mt-2 w-fit"
-							>
-								<div class="flex justify-center items-center gap-1">
+							<div class="flex flex-row gap-2 items-center">
+								<div
+									class="flex justify-center items-center gap-2 shadow-md bg-white rounded-lg px-2 py-1 h-fit"
+								>
 									<button
 										class="cursor-pointer"
 										onclick={() => {
 											cartStore.removeOne(product.id);
+											invalidate('app:cart');
 										}}
 									>
 										<Minus size={16} />
@@ -77,6 +58,7 @@
 										class="cursor-pointer"
 										onclick={() => {
 											cartStore.addOne(product.id);
+											invalidate('app:cart');
 										}}
 									>
 										<Plus size={16} />
@@ -86,64 +68,34 @@
 									class="rounded-lg cursor-pointer text-red-700"
 									onclick={() => {
 										cartStore.removeItem(product.id);
+										invalidate('app:cart');
 									}}
 								>
-									<Trash size={20} />
+									<X size={20} />
 								</button>
-							</divsd>
-							<!-- <div class="flex flex-col justify-center items-center">
-							</div> -->
+							</div>
 						</div>
 					</div>
 				{/each}
 			</div>
-			<div class="flex flex-col bg-white rounded-lg gap-5">
+			<div class="flex flex-col rounded-lg shadow-md p-4 bg-neutral-200/50 gap-2 h-fit">
 				<h3 class="font-bold text-lg">Resumen de compra</h3>
-				<div class="flex justify-between items-center">
-					<p class="font-light text-sm">Subtotal:</p>
-					<p class="font-semibold text-sm">
-						${productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0)}
-					</p>
-				</div>
-				<div class="flex justify-between items-center">
-					<p class="font-light text-sm">Impuestos:</p>
-					<p class="font-semibold text-sm">
-						10%
-						<span>
-							( ${productsInCart.reduce(
-								(acc, product) => acc + +product.price * product.quantity,
-								0
-							) * 0.1}
-							)
-						</span>
-					</p>
-				</div>
-				<!-- <div class="flex justify-between items-center">
-					<p
-						class="font-light text-sm"
-					>
-						Envío:
-					</p>
-					<p class="font-semibold text-sm">$0</p>
-				</div> -->
-
 				<div class="flex justify-between items-center">
 					<p class="font-light text-sm">Total:</p>
 					<p class="font-semibold text-sm">
-						${productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0) +
-							productsInCart.reduce((acc, product) => acc + +product.price * product.quantity, 0) *
-								0.1}
+						${data.detailedCartItems.reduce(
+							(acc, product) => acc + +product.price * product.quantity,
+							0
+						)}
 					</p>
 				</div>
 				<a
 					href="/checkout"
-					class="bg-blue-500 rounded-lg text-white text-center px-4 py-2 mt-4 hover:bg-blue-600 transition-colors duration-300"
+					class="bg-blue-500 rounded-lg text-white text-center px-4 py-2 mt-2 hover:bg-blue-600 transition-colors duration-300"
 				>
-					Comprar
+					Iniciar compra
 				</a>
 			</div>
-		{:else}
-			<p>No products in cart</p>
 		{/if}
 	</div>
 </div>

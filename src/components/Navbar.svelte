@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Menubar } from 'bits-ui';
 	import { Check, ChevronRight, Menu, ShoppingCart } from '@lucide/svelte';
-	import { cartStore } from '../store/cart.store';
+	import { cartStore } from '@/store/cart.store';
 
 	let totalItems = $state(0);
 	cartStore.subscribe((cart) => {
@@ -44,9 +44,10 @@
 
 <Menubar.Root class={`fixed z-50 right-0 left-0 top-8 flex h-12 justify-between items-center px-4`}>
 	<div
-		class="max-w-[1200px] mx-auto w-full px-6 flex h-12 border border-dark-10 justify-between items-center gap-1 rounded-xl bg-white/30 backdrop-blur-lg"
+		class="max-w-[1200px] mx-auto w-full px-6 flex h-12 border border-dark-10 justify-between items-center gap-1 rounded-lg shadow-md bg-neutral-200/50 backdrop-blur-lg"
 	>
-		<h1 class="font-bold text-xl">
+		<h1 class="font-bold text-xl flex items-center justify-center">
+			<img src="/images/logo/logo.png" alt="logo" class="aspect-square w-[40px] h-auto" />
 			<a href="/"> Neworld </a>
 		</h1>
 		<div class="hidden md:flex gap-2">

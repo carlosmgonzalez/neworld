@@ -1,5 +1,6 @@
-<script>
-	import { products } from '@/database/products';
+<script lang="ts">
+	import type { Product } from '@prisma/client';
+	export let products: Product[];
 	import ProductCard from './ui/ProductCard.svelte';
 </script>
 

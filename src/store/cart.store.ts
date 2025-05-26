@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-interface CartItem {
+export interface CartItem {
 	productId: string;
 	quantity: number;
 }
@@ -8,7 +8,7 @@ interface CartItem {
 function createCart() {
 	const initialCart: CartItem[] = (() => {
 		if (typeof window !== 'undefined' && window.localStorage) {
-			const stored = localStorage.getItem('cart');
+			const stored = localStorage.getItem('mycart');
 			try {
 				return stored ? JSON.parse(stored) : [];
 			} catch {
@@ -19,7 +19,7 @@ function createCart() {
 	})();
 
 	const saveCart = (cart: CartItem[]) => {
-		localStorage.setItem('cart', JSON.stringify(cart));
+		localStorage.setItem('mycart', JSON.stringify(cart));
 	};
 
 	const { subscribe, set, update } = writable<CartItem[]>(initialCart);
@@ -64,7 +64,7 @@ function createCart() {
 			}),
 		clear: () =>
 			update(() => {
-				localStorage.setItem('cart', '[]');
+				localStorage.setItem('mycart', '[]');
 				return [];
 			}),
 		set // Permite reemplazar el carrito completo si es necesario
