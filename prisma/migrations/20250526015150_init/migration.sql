@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED');
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'PACKING', 'SHIPPED', 'DELIVERED', 'CANCELLED');
 
 -- CreateTable
 CREATE TABLE "Product" (
@@ -22,6 +22,7 @@ CREATE TABLE "Product" (
 -- CreateTable
 CREATE TABLE "Review" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "comment" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
@@ -37,6 +38,7 @@ CREATE TABLE "Order" (
     "totalItems" INTEGER NOT NULL,
     "totalPrice" DOUBLE PRECISION NOT NULL,
     "name" TEXT NOT NULL,
+    "lastname" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "province" TEXT NOT NULL,
     "address" TEXT NOT NULL,
