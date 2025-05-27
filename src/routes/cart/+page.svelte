@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
 	import { Minus, Plus, X } from '@lucide/svelte';
 
@@ -12,7 +13,7 @@
 
 <div class="page-container">
 	<h1 class="text-2xl font-semibold">Carrito</h1>
-	<a href="/" class="underline text-neutral-500"> Seguir comprando </a>
+	<a href="/" class="underline text-neutral-600"> Seguir comprando </a>
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
 		{#if data.detailedCartItems.length === 0}
 			<p>No hay productos en el carrito</p>
@@ -34,7 +35,7 @@
 									{product.smallDescription}
 								</p>
 								<p class="font-light text-sm text-neutral-600">
-									${+product.price * product.quantity}
+									{formatPrice(+product.price * product.quantity)}
 								</p>
 							</div>
 							<div class="flex flex-row gap-2 items-center">
@@ -83,9 +84,11 @@
 				<div class="flex justify-between items-center">
 					<p class="font-light text-sm">Total:</p>
 					<p class="font-semibold text-sm">
-						${data.detailedCartItems.reduce(
-							(acc, product) => acc + +product.price * product.quantity,
-							0
+						{formatPrice(
+							data.detailedCartItems.reduce(
+								(acc, product) => acc + +product.price * product.quantity,
+								0
+							)
 						)}
 					</p>
 				</div>

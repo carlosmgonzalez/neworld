@@ -64,6 +64,7 @@ model Order {
   email    String
   province String
   address  String
+  locality String
   zipCode  String
   phone    String
   dni      String
@@ -86,4 +87,21 @@ model OrderItem {
 
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
+}
+
+model Province {
+  id         Int        @id // No @default(autoincrement()) si los IDs son predefinidos y no generados por la BD
+  province   String     @db.VarChar(255) // Mapea a varchar(255)
+  localities Locality[]
+
+  @@map("Provinces") // Mapea al nombre de tabla "Provinces"
+}
+
+model Locality {
+  id          Int      @id // No @default(autoincrement()) si los IDs son predefinidos
+  id_province Int
+  locality    String   @db.VarChar(255) // Asumiendo que también quieres un límite, o simplemente String para TEXT
+  province    Province @relation(fields: [id_province], references: [id])
+
+  @@map("Localities") // Mapea al nombre de tabla "Localities"
 }

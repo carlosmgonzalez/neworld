@@ -50,6 +50,7 @@ export const createOrder = async ({ request }: { request: Request }) => {
 				phone: orderData.phone,
 				dni: orderData.dni,
 				province: orderData.province,
+				locality: orderData.locality,
 				address: orderData.address,
 				zipCode: orderData.zipCode,
 				OrderItem: {

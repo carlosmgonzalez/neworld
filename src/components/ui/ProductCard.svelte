@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '@splidejs/svelte-splide/css';
 	import type { Product } from '@prisma/client';
+	import { formatPrice } from '@/lib/utils/formatters';
 
 	export let product: Product;
 </script>
@@ -15,10 +16,8 @@
 		class="h-full w-full rounded-t-xl aspect-square"
 	/>
 	<div class="flex flex-col px-2 pb-2 w-full">
-		<div class="flex justify-between items-center w-full">
-			<h3 class="font-bold">{product.name}</h3>
-			<p class="text-xs text-gray-500">${product.price}</p>
-		</div>
+		<h3 class="font-bold">{product.name}</h3>
 		<p class="text-xs self-start">{product.smallDescription}</p>
+		<p class="text-sm font-semibold mt-2 self-end">{formatPrice(product.price)}</p>
 	</div>
 </a>

@@ -3,6 +3,7 @@ import { browser } from '$app/environment';
 import { get } from 'svelte/store';
 import type { Product } from '@prisma/client';
 import type { PageLoad } from './$types';
+import { userInfoStore, type UserInfo } from '@/store/user-info.store';
 
 export const load: PageLoad = async ({ fetch, depends }) => {
 	// `depends` se usa para decirle a SvelteKit que esta función `load`
@@ -11,10 +12,22 @@ export const load: PageLoad = async ({ fetch, depends }) => {
 	depends('app:cart'); // 'app:cart' es un identificador arbitrario que puedes usar
 
 	let currentCartItems: CartItem[] = [];
+	let currentUserInfo: UserInfo = {
+		address: '',
+		dni: '',
+		email: '',
+		lastname: '',
+		locality: '',
+		name: '',
+		phone: '',
+		province: '',
+		zipCode: ''
+	};
 
 	if (browser) {
 		// Solo accedemos al store (que podría depender de localStorage) si estamos en el navegador
 		currentCartItems = get(cartStore);
+		currentUserInfo = get(userInfoStore);
 	}
 
 	if (!currentCartItems || currentCartItems.length === 0) {
@@ -35,6 +48,18 @@ export const load: PageLoad = async ({ fetch, depends }) => {
 			body: JSON.stringify(productsIds)
 		});
 
+		const responseProvince = await fetch(`/api/location/province/${currentUserInfo.province}`);
+		const dataProvince = await responseProvince.json();
+
+		const responseLocality = await fetch(`/api/location/locality/${currentUserInfo.locality}`);
+		const dataLocality = await responseLocality.json();
+
+		currentUserInfo = {
+			...currentUserInfo,
+			province: dataProvince.province.province,
+			locality: dataLocality.locality.locality
+		};
+
 		if (!res.ok) {
 			console.log('Api error en load');
 			return {
@@ -50,8 +75,11 @@ export const load: PageLoad = async ({ fetch, depends }) => {
 			quantity: currentCartItems.find((i) => i.productId === product.id)!.quantity
 		}));
 
+		console.log(currentUserInfo);
+
 		return {
 			detailedCartItems,
+			currentUserInfo,
 			error: null
 		};
 	} catch (err) {

@@ -8,6 +8,7 @@ export interface UserInfo {
 	phone: string;
 	address: string;
 	province: string;
+	locality: string;
 	zipCode: string;
 	dni: string;
 }

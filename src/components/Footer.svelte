@@ -16,7 +16,7 @@
 			<Instagram size={24} />
 		</a>
 		<a
-			href="https://facebook.com/"
+			href="https://www.facebook.com/share/16MeuejK5N"
 			target="_blank"
 			rel="noopener"
 			aria-label="Facebook"
