@@ -64,7 +64,7 @@ model Order {
   email    String
   province String
   address  String
-  locality String
+  locality String @default("no incluido")
   zipCode  String
   phone    String
   dni      String
