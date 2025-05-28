@@ -7,8 +7,13 @@
 
 	import { Combobox } from 'bits-ui';
 	import { Check, ChevronsDown, ChevronsUp, ChevronsUpDown, Loader } from '@lucide/svelte';
-	import type { Locality, Province } from '@prisma/client';
 	import { debounce } from '@/lib/utils/debounce';
+	import type {
+		Localidad,
+		LocalityResponse,
+		ProvinceResponse,
+		Provincia
+	} from '@/lib/interfaces/argentina-gob-api-res.interface';
 
 	const formSchema = z.object({
 		name: z.string().min(2, { error: 'El nombre debe tener al menos 2 caracteres' }),
@@ -36,60 +41,62 @@
 	let locality = $state('');
 
 	let queryProvince = $state('');
-	let resultProvince = $state<Province[]>([]);
+	let listProvinces = $state<Provincia[]>([]);
 	let isLoading = false;
 
 	const fetchProvinces = async (query: string) => {
 		isLoading = true;
 
 		try {
-			const res = await fetch(`/api/location/province?search=${encodeURIComponent(query)}`);
+			const res = await fetch(
+				`https://apis.datos.gob.ar/georef/api/provincias?max=100${query.length > 0 ? '&nombre=' + encodeURIComponent(query) : ''}`
+			);
 
 			if (!res.ok) {
 				throw new Error(`Error ${res.status}: ${res.statusText}`);
 			}
 
-			const data: { ok: boolean; data: Province[] } = await res.json();
+			const data: ProvinceResponse = await res.json();
 
-			resultProvince = data.data;
+			listProvinces = data.provincias;
 		} catch (err) {
 			console.error(`Failed to fetch province`, err);
-			resultProvince = [];
+			listProvinces = [];
 		} finally {
 			isLoading = false;
 		}
 	};
 
 	// @ts-ignore
-	const debouncedFetchProvince = debounce(fetchProvinces, 1000);
+	const debouncedFetchProvince = debounce(fetchProvinces, 500);
 
 	let queryLocality = $state('');
-	let resultLocality = $state<Locality[]>([]);
+	let listLocalities = $state<Localidad[]>([]);
 
-	const fetchLocality = async (query: string, provinceId: string) => {
+	const fetchLocality = async (query: string) => {
 		isLoading = true;
 
 		try {
 			const res = await fetch(
-				`/api/location/locality?search=${encodeURIComponent(query)}&provinceId=${provinceId}`
+				`https://apis.datos.gob.ar/georef/api/localidades?max=1000&provincia=${province}${query.length > 0 ? '&nombre=' + encodeURIComponent(query) : ''}`
 			);
 			if (!res.ok) {
 				throw new Error(`Error ${res.status}: ${res.statusText}`);
 			}
 
-			const data: { ok: boolean; data: Locality[] } = await res.json();
+			const data: LocalityResponse = await res.json();
 
-			resultLocality = data.data;
+			listLocalities = data.localidades;
 		} catch (err) {
 			console.error(`Failed to fetch province`, err);
-			resultLocality = [];
+			listLocalities = [];
 		} finally {
 			isLoading = false;
 		}
 	};
 
 	// @ts-ignore
-	const debouncedFetchLocality = debounce(fetchLocality, 1000);
+	const debouncedFetchLocality = debounce(fetchLocality, 500);
 
 	$effect(() => {
 		fetchProvinces('');
@@ -258,7 +265,7 @@
 						onValueChange={(e) => {
 							province = e;
 							locality = '';
-							fetchLocality('', province);
+							fetchLocality('');
 						}}
 						value={province}
 						type="single"
@@ -270,8 +277,8 @@
 							<Combobox.Input
 								oninput={handleInputProvince}
 								class="focus:outline-0 w-full"
-								placeholder="Buscar ciudad"
-								aria-label="Buscar ciudad"
+								placeholder="Buscar provincia"
+								aria-label="Buscar provincia"
 							/>
 							<Combobox.Trigger class="">
 								<ChevronsUpDown class="text-muted-foreground size-6" />
@@ -286,14 +293,14 @@
 									<ChevronsUp class="size-3" />
 								</Combobox.ScrollUpButton>
 								<Combobox.Viewport class="p-1">
-									{#each resultProvince as data, i (i + data.id)}
+									{#each listProvinces as province, i (i + province.id)}
 										<Combobox.Item
 											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
-											value={`${data.id}`}
-											label={data.province}
+											value={`${province.nombre}`}
+											label={province.nombre}
 										>
 											{#snippet children({ selected })}
-												{data.province}
+												{province.nombre}
 												{#if selected}
 													<div class="ml-auto">
 														<Check />
@@ -303,7 +310,7 @@
 										</Combobox.Item>
 									{:else}
 										<span class="block px-5 py-2 text-sm text-muted-foreground">
-											No se obtuvo ningun resultado
+											Ningun resultado o sigue escribiendo
 										</span>
 									{/each}
 								</Combobox.Viewport>
@@ -351,14 +358,14 @@
 									<ChevronsUp class="size-3" />
 								</Combobox.ScrollUpButton>
 								<Combobox.Viewport class="p-1">
-									{#each resultLocality as data, i (i + data.id)}
+									{#each listLocalities as locality, i (i + locality.id)}
 										<Combobox.Item
 											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
-											value={`${data.id}`}
-											label={data.locality}
+											value={`${locality.nombre}`}
+											label={locality.nombre}
 										>
 											{#snippet children({ selected })}
-												{data.locality}
+												{locality.nombre}
 												{#if selected}
 													<div class="ml-auto">
 														<Check />
@@ -368,7 +375,7 @@
 										</Combobox.Item>
 									{:else}
 										<span class="block px-5 py-2 text-sm text-muted-foreground">
-											No se obtuvo ningun resultado
+											Ningun resultado o sigue escribiendo
 										</span>
 									{/each}
 								</Combobox.Viewport>

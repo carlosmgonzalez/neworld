@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
 	import { userInfoStore } from '@/store/user-info.store';
@@ -9,10 +8,11 @@
 	const { data } = $props();
 
 	const cart = get(cartStore);
+	const userInfo = get(userInfoStore);
 
 	let order = {
 		items: cart,
-		...data.currentUserInfo
+		...userInfo
 	};
 
 	let isLoading = $state(false);
