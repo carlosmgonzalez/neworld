@@ -18,7 +18,7 @@
  
 :root {
 	/* Colors */
-	--background: hsl(0, 0%, 100%);
+	--background: hsl(0, 0%, 92%);
 	--background-alt: hsl(0 0% 100%);
 	--foreground: hsl(0 0% 9%);
 	--foreground-alt: hsl(0 0% 32%);
@@ -295,11 +295,11 @@
 	}
 
 	.input-outline-blue {
-		@apply p-2 rounded-lg outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-neutral-200/50
+		@apply p-2 rounded-lg outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-white/80
 	}
 
 	.page-container {
-		@apply w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-24
+		@apply w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-16
 	}
 }
  

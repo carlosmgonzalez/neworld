@@ -155,8 +155,8 @@
 </script>
 
 <div class="page-container">
-	<h1 class="text-2xl font-semibold">Informacion de envio</h1>
-	<a href="/cart" class="underline text-neutral-600"> Volver al carrito </a>
+	<h1 class="text-lg font-semibold">Informacion de envio</h1>
+	<a href="/cart" class="underline text-sm text-neutral-600"> Volver al carrito </a>
 	<form onsubmit={handleSubmit}>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
 			<div class="flex flex-col gap-2 h-fit">
@@ -272,7 +272,7 @@
 						name="city"
 					>
 						<div
-							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-neutral-200/50"
+							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
 						>
 							<Combobox.Input
 								oninput={handleInputProvince}
@@ -337,7 +337,7 @@
 						name="city"
 					>
 						<div
-							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-neutral-200/50"
+							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
 						>
 							<Combobox.Input
 								oninput={handleInputLocality}
@@ -362,10 +362,10 @@
 										<Combobox.Item
 											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
 											value={`${locality.nombre}`}
-											label={locality.nombre}
+											label={`${locality.nombre} (${locality.municipio.nombre})`}
 										>
 											{#snippet children({ selected })}
-												{locality.nombre}
+												{`${locality.nombre} (${locality.municipio.nombre})`}
 												{#if selected}
 													<div class="ml-auto">
 														<Check />

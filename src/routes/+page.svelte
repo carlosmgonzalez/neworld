@@ -44,9 +44,9 @@
 		<p class="text-lg text-white mt-2">Descubre el nuevo mundo</p>
 	</div>
 </div> -->
-<div class="relative h-[600px] overflow-hidden">
+<div class="relative h-[300px] md:h-[500px] overflow-hidden">
 	<video
-		class="absolute top-0 left-0 w-full h-full object-cover z-0"
+		class="absolute top-14 left-0 w-full h-full object-cover z-0"
 		src="https://res.cloudinary.com/difikt7so/video/upload/v1748374945/neworld/wpkhlhnr7c8oya3tkh23.mp4"
 		autoplay
 		muted

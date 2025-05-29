@@ -104,7 +104,7 @@
 		</div>
 		<ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-10">
 			{#each data.product.Review as review}
-				<li class="bg-neutral-200/50 rounded-lg p-4 flex flex-col">
+				<li class="bg-white shadow-md rounded-lg p-4 flex flex-col">
 					<div class="flex justify-between items-center">
 						<p>{review.name}</p>
 						<div class="flex items-center mb-2">
