@@ -30,13 +30,26 @@ export const createOrder = async ({ request }: { request: Request }) => {
 			});
 		}
 
-		const totalPrice = orderData.items.reduce((acc, item) => {
+		let totalPrice = orderData.items.reduce((acc, item) => {
 			const price = products.find((pr) => pr.id === item.productId)!.price;
 
 			acc += price * item.quantity;
 
 			return acc;
 		}, 0);
+
+		const existCoupon = await prisma.coupon.findUnique({
+			where: {
+				code: orderData.coupon,
+				active: true
+			}
+		});
+
+		if (existCoupon) {
+			if (existCoupon.discountType === 'PERCENTAGE') {
+				totalPrice = totalPrice * ((100 - Number(existCoupon.discountValue)) / 100);
+			}
+		}
 
 		const totalItems = orderData.items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -53,6 +66,7 @@ export const createOrder = async ({ request }: { request: Request }) => {
 				locality: orderData.locality,
 				address: orderData.address,
 				zipCode: orderData.zipCode,
+				couponId: existCoupon ? existCoupon.id : null,
 				OrderItem: {
 					createMany: {
 						data: orderData.items.map(({ productId, quantity }) => {
@@ -76,14 +90,26 @@ export const createOrder = async ({ request }: { request: Request }) => {
 			}
 		});
 
+		let items = order.OrderItem.map((item) => ({
+			id: item.productId,
+			title: products.find((p) => p.id === item.productId)!.name,
+			quantity: item.quantity,
+			unit_price: item.price,
+			picture_url: products.find((p) => p.id === item.productId)!.images[0]
+		}));
+
+		if (existCoupon) {
+			if (existCoupon.discountType === 'PERCENTAGE') {
+				items = items.map((item) => ({
+					...item,
+					unit_price: item.unit_price * ((100 - Number(existCoupon.discountValue)) / 100)
+				}));
+			}
+		}
+
 		const payment = await preference.create({
 			body: {
-				items: order.OrderItem.map((item) => ({
-					id: item.productId,
-					title: products.find((p) => p.id === item.productId)!.name,
-					quantity: item.quantity,
-					unit_price: item.price
-				})),
+				items,
 				notification_url: `${PUBLIC_BASE_URL}/api/orders/webhook`,
 				back_urls: {
 					success: `${PUBLIC_BASE_URL}/order/${order.id}`,

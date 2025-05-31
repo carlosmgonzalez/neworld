@@ -24,7 +24,7 @@
 						<img
 							src={product.images[0]}
 							alt={product.smallDescription}
-							class="w-[150px] h-auto aspect-square rounded-l-lg shadow-md"
+							class="w-[160px] h-auto aspect-square rounded-l-lg"
 						/>
 						<div class="w-full flex flex-col justify-between gap-1 pr-2 md:flex-row md:gap-4">
 							<div class="flex flex-col gap-1 md:gap-4">
@@ -32,7 +32,7 @@
 								<p class="text-xs font-light text-neutral-600">
 									{product.smallDescription}
 								</p>
-								<p class="font-light text-sm text-neutral-600">
+								<p class="font-light text-sm">
 									{formatPrice(+product.price * product.quantity)}
 								</p>
 							</div>

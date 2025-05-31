@@ -7,6 +7,7 @@ export interface UserInfo {
 	email: string;
 	phone: string;
 	address: string;
+	department?: string;
 	province: string;
 	locality: string;
 	zipCode: string;

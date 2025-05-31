@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { createAuthClient } from 'better-auth/svelte';
 	import { Instagram, Facebook } from '@lucide/svelte';
+	import { authClient } from '@/lib/auth/auth-client';
 </script>
 
 <footer
@@ -25,5 +27,17 @@
 			<Facebook size={24} />
 		</a>
 	</div>
-	<span class="text-xs text-foreground-alt">&copy; {new Date().getFullYear()} Neworld</span>
+	<span class="text-xs text-foreground-alt">
+		&copy; {new Date().getFullYear()} Neworld
+		<!-- <button
+			class="text-xs text-foreground-alt hover:cursor-pointer"
+			onclick={async () => {
+				await authClient.signIn.social({
+					provider: 'google'
+				});
+			}}
+		>
+			SignIn
+		</button> -->
+	</span>
 </footer>

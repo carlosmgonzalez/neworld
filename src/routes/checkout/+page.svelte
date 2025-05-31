@@ -21,6 +21,7 @@
 		email: z.email(),
 		phone: z.string().min(8, { error: 'El teléfono debe tener al menos 8 caracteres' }),
 		address: z.string().min(5, { error: 'La dirección debe tener al menos 5 caracteres' }),
+		department: z.string().optional(),
 		province: z.string().min(1, { error: 'La provincia debe tener al menos 2 caracteres' }),
 		locality: z.string().min(1, { error: 'La localidad no se encuentra en esa provincia' }),
 		zipCode: z.string().min(4, { error: 'El código postal debe ser valido' }),
@@ -36,6 +37,7 @@
 	let email = $state(userInfo.email || '');
 	let phone = $state(userInfo.phone || '');
 	let address = $state(userInfo.address || '');
+	let department = $state(userInfo.department || '');
 	let zipCode = $state(userInfo.zipCode || '');
 	let province = $state('');
 	let locality = $state('');
@@ -127,12 +129,11 @@
 			email,
 			phone,
 			address,
+			department,
 			province,
 			locality,
 			zipCode
 		};
-
-		console.log(form);
 
 		const validateForm = formSchema.safeParse(form);
 
@@ -146,9 +147,7 @@
 			return;
 		}
 
-		const userInfo = validateForm.data;
-
-		userInfoStore.save(userInfo);
+		userInfoStore.save(validateForm.data);
 
 		goto('/confirm');
 	};
@@ -160,11 +159,13 @@
 	<form onsubmit={handleSubmit}>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
 			<div class="flex flex-col gap-2 h-fit">
-				<p>Datos personales:</p>
+				<p class="text-sm">Datos personales:</p>
 				<div class="flex flex-col w-full">
+					<label for="name" class="text-xs text-neutral-600"> Nombre </label>
 					<input
 						type="text"
 						name="name"
+						id="name"
 						bind:value={name}
 						placeholder="Nombre"
 						class="input-outline-blue"
@@ -178,9 +179,11 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="lastname" class="text-xs text-neutral-600"> Apellido </label>
 					<input
 						type="text"
 						name="lastname"
+						id="lastname"
 						bind:value={lastname}
 						placeholder="Apellido"
 						class="input-outline-blue"
@@ -194,9 +197,11 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="email" class="text-xs text-neutral-600"> Email </label>
 					<input
 						type="email"
 						name="email"
+						id="email"
 						bind:value={email}
 						placeholder="Correo electrónico"
 						class="input-outline-blue"
@@ -210,11 +215,13 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="phone" class="text-xs text-neutral-600"> Teléfono </label>
 					<input
-						type="text"
+						type="tel"
 						name="phone"
+						id="phone"
 						bind:value={phone}
-						placeholder="Teléfono"
+						placeholder="011-47029302"
 						class="input-outline-blue"
 						required
 					/>
@@ -226,9 +233,11 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="dni" class="text-xs text-neutral-600"> DNI </label>
 					<input
 						type="text"
 						name="dni"
+						id="dni"
 						bind:value={dni}
 						placeholder="DNI"
 						class="input-outline-blue"
@@ -242,25 +251,46 @@
 				</div>
 			</div>
 			<div class="flex flex-col gap-2 h-fit">
-				<p>Dirección de envío:</p>
+				<p class="text-sm">Dirección de envío:</p>
 
-				<div class="flex flex-col w-full">
-					<input
-						type="text"
-						name="address"
-						bind:value={address}
-						placeholder="Dirección completa"
-						class="input-outline-blue"
-						required
-					/>
-					{#if formErrors?.address && formErrors.address.errors.length > 0}
-						<p class="text-red-500 text-sm">
-							{formErrors.address.errors[0]}
-						</p>
-					{/if}
+				<div class="grid grid-cols-4 gap-2">
+					<div class="flex flex-col w-full col-span-3">
+						<label for="addrress" class="text-xs text-neutral-600"> Dirección </label>
+						<input
+							type="text"
+							name="address"
+							id="address"
+							bind:value={address}
+							placeholder="Dirección completa"
+							class="input-outline-blue"
+							required
+						/>
+						{#if formErrors?.address && formErrors.address.errors.length > 0}
+							<p class="text-red-500 text-sm">
+								{formErrors.address.errors[0]}
+							</p>
+						{/if}
+					</div>
+					<div class="flex flex-col w-full">
+						<label for="department" class="text-xs text-neutral-600"> Departamento </label>
+						<input
+							type="text"
+							name="department"
+							id="department"
+							bind:value={department}
+							placeholder="2B"
+							class="input-outline-blue"
+						/>
+						{#if formErrors?.address && formErrors.address.errors.length > 0}
+							<p class="text-red-500 text-sm">
+								{formErrors.address.errors[0]}
+							</p>
+						{/if}
+					</div>
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="province" class="text-xs text-neutral-600"> Provincia </label>
 					<Combobox.Root
 						onValueChange={(e) => {
 							province = e;
@@ -269,13 +299,14 @@
 						}}
 						value={province}
 						type="single"
-						name="city"
+						name="province"
 					>
 						<div
 							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
 						>
 							<Combobox.Input
 								oninput={handleInputProvince}
+								id="province"
 								class="focus:outline-0 w-full"
 								placeholder="Buscar provincia"
 								aria-label="Buscar provincia"
@@ -328,19 +359,21 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="locality" class="text-xs text-neutral-600"> Localidad </label>
 					<Combobox.Root
 						onValueChange={(e) => {
 							locality = e;
 						}}
 						value={locality}
 						type="single"
-						name="city"
+						name="locality"
 					>
 						<div
 							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
 						>
 							<Combobox.Input
 								oninput={handleInputLocality}
+								id="locality"
 								class="focus:outline-0 w-full"
 								placeholder="Buscar localidad"
 								aria-label="Buscar localidad"
@@ -393,9 +426,11 @@
 				</div>
 
 				<div class="flex flex-col w-full">
+					<label for="zipCode" class="text-xs text-neutral-600"> Codigo Postal </label>
 					<input
 						type="text"
 						name="zipCode"
+						id="zipCode"
 						bind:value={zipCode}
 						placeholder="Código postal"
 						class="input-outline-blue"

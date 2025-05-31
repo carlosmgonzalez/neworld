@@ -18,6 +18,7 @@ export const OrderSchema = z
 		locality: z.string(),
 		zipCode: z.string(),
 		phone: z.string(),
-		dni: z.string()
+		dni: z.string(),
+		coupon: z.string()
 	})
 	.strict();
