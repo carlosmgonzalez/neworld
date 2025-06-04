@@ -14,6 +14,8 @@
 		ProvinceResponse,
 		Provincia
 	} from '@/lib/interfaces/argentina-gob-api-res.interface';
+	import { provincesDb } from '@/lib/database/provinces.db';
+	import { localidadesDb } from '@/lib/database/localities.db';
 
 	const formSchema = z.object({
 		name: z.string().min(2, { error: 'El nombre debe tener al menos 2 caracteres' }),
@@ -31,6 +33,8 @@
 			.max(8, { error: 'El DNI debe ser valido' })
 	});
 
+	let formErrors = $state<Record<string, { errors: string[] }> | null>(null);
+
 	let name = $state(userInfo.name || '');
 	let lastname = $state(userInfo.lastname || '');
 	let dni = $state(userInfo.dni || '');
@@ -43,80 +47,36 @@
 	let locality = $state('');
 
 	let queryProvince = $state('');
-	let listProvinces = $state<Provincia[]>([]);
-	let isLoading = false;
-
-	const fetchProvinces = async (query: string) => {
-		isLoading = true;
-
-		try {
-			const res = await fetch(
-				`https://apis.datos.gob.ar/georef/api/provincias?max=100${query.length > 0 ? '&nombre=' + encodeURIComponent(query) : ''}`
-			);
-
-			if (!res.ok) {
-				throw new Error(`Error ${res.status}: ${res.statusText}`);
-			}
-
-			const data: ProvinceResponse = await res.json();
-
-			listProvinces = data.provincias;
-		} catch (err) {
-			console.error(`Failed to fetch province`, err);
-			listProvinces = [];
-		} finally {
-			isLoading = false;
-		}
-	};
-
-	// @ts-ignore
-	const debouncedFetchProvince = debounce(fetchProvinces, 500);
+	let listProvinces = $state<Provincia[]>(provincesDb);
 
 	let queryLocality = $state('');
 	let listLocalities = $state<Localidad[]>([]);
 
-	const fetchLocality = async (query: string) => {
-		isLoading = true;
-
-		try {
-			const res = await fetch(
-				`https://apis.datos.gob.ar/georef/api/localidades?max=1000&provincia=${province}${query.length > 0 ? '&nombre=' + encodeURIComponent(query) : ''}`
-			);
-			if (!res.ok) {
-				throw new Error(`Error ${res.status}: ${res.statusText}`);
-			}
-
-			const data: LocalityResponse = await res.json();
-
-			listLocalities = data.localidades;
-		} catch (err) {
-			console.error(`Failed to fetch province`, err);
-			listLocalities = [];
-		} finally {
-			isLoading = false;
-		}
-	};
-
-	// @ts-ignore
-	const debouncedFetchLocality = debounce(fetchLocality, 500);
-
-	$effect(() => {
-		fetchProvinces('');
-	});
+	const filterProvinces = $derived(
+		queryProvince === ''
+			? listProvinces
+			: listProvinces.filter((province) =>
+					province.nombre.toLowerCase().includes(queryProvince.toLowerCase())
+				)
+	);
 
 	const handleInputProvince = (event: Event) => {
 		const target = event.target as HTMLInputElement;
 		queryProvince = target.value;
-		debouncedFetchProvince(queryProvince);
 	};
+
+	const filterLocalities = $derived(
+		queryLocality === ''
+			? listLocalities
+			: listLocalities.filter((locality) =>
+					locality.nombre.toLowerCase().includes(queryLocality.toLowerCase())
+				)
+	);
 
 	const handleInputLocality = (event: Event) => {
 		const target = event.target as HTMLInputElement;
 		queryLocality = target.value;
-		debouncedFetchLocality(queryLocality, province);
 	};
-
-	let formErrors = $state<Record<string, { errors: string[] }> | null>(null);
 
 	const handleSubmit = async (event: Event) => {
 		formErrors = null;
@@ -294,8 +254,7 @@
 					<Combobox.Root
 						onValueChange={(e) => {
 							province = e;
-							locality = '';
-							fetchLocality('');
+							listLocalities = localidadesDb.filter((locality) => locality.provincia.nombre === e);
 						}}
 						value={province}
 						type="single"
@@ -324,7 +283,7 @@
 									<ChevronsUp class="size-3" />
 								</Combobox.ScrollUpButton>
 								<Combobox.Viewport class="p-1">
-									{#each listProvinces as province, i (i + province.id)}
+									{#each filterProvinces as province, i (i + province.id)}
 										<Combobox.Item
 											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
 											value={`${province.nombre}`}
@@ -391,7 +350,7 @@
 									<ChevronsUp class="size-3" />
 								</Combobox.ScrollUpButton>
 								<Combobox.Viewport class="p-1">
-									{#each listLocalities as locality, i (i + locality.id)}
+									{#each filterLocalities as locality, i (i + locality.id)}
 										<Combobox.Item
 											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
 											value={`${locality.nombre}`}

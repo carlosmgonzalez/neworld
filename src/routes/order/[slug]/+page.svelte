@@ -1,14 +1,7 @@
 <script lang="ts">
 	import { formatPrice } from '@/lib/utils/formatters';
 	import type { PageProps } from './$types';
-	import {
-		BanknoteArrowDown,
-		FileUser,
-		Handshake,
-		Package,
-		PackageSearch,
-		Truck
-	} from '@lucide/svelte';
+	import { BanknoteArrowDown, Handshake, Package, PackageSearch, Truck } from '@lucide/svelte';
 
 	const { data }: PageProps = $props();
 </script>
@@ -22,17 +15,47 @@
 			</div>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-5">
-			<div class="bg-blue-200/50 rounded-lg p-3 shadow-lg">
-				<p class="font-semibold mb-2 text-center w-full bg-blue-400/50 rounded-md py-1">
+		{#if data.order!.byTransfer}
+			<div class="flex flex-col bg-neutral-200 rounded-md shadow-md mt-5">
+				<p class="font-semibold text-center w-full bg-neutral-700 text-white rounded-t-md py-1">
+					Información de transferencia
+				</p>
+				<div class="flex flex-col px-3 py-1">
+					<p class="text-sm text-neutral-600">
+						Recuerda que debes transferir el monto total a la cuenta bancaria indicada.
+					</p>
+					<p class="text-sm text-neutral-600">
+						Una vez realizado el pago, envíanos el comprobante a nuestro whatsapp
+					</p>
+					<div class="w-full h-[1px] bg-neutral-300 my-2"></div>
+					<p class="font-semibold text-sm">
+						Alias:
+						<span class="font-medium text-neutral-700">diego.a.gonzalez.c</span>
+					</p>
+					<p class="font-semibold text-sm">
+						Nombre:
+						<span class="font-medium text-neutral-700">Diego Alejandro Gonzalez</span>
+					</p>
+					<p class="font-semibold text-sm">
+						Banco:
+						<span class="font-medium text-neutral-700">Mercado Pago</span>
+					</p>
+				</div>
+			</div>
+		{/if}
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-2 mt-5">
+			<div class="bg-neutral-200 rounded-lg shadow-lg">
+				<p class="font-semibold text-center w-full bg-neutral-700 text-white rounded-t-md py-1">
 					Productos
 				</p>
 				{#each data.order!.OrderItem as product}
-					<div class="flex flex-row gap-2">
-						<img src={product.images[0]} alt="" class="w-[150px] h-auto rounded-lg shadow-md" />
-						<div class="flex flex-col gap-2">
-							<p class="font-medium">{product.name}</p>
-							<p>
+					<div class="flex flex-row gap-2 p-2 items-center">
+						<img src={product.images[0]} alt="" class="w-[100px] h-auto rounded-lg shadow-md" />
+						<div class="flex flex-col">
+							<p class="text-sm">{product.name}</p>
+							<p class="text-sm">{formatPrice(product.price)}</p>
+							<p class="text-xs text-neutral-500">
 								{product.quantity}
 								{#if product.quantity > 1}
 									unidades
@@ -40,23 +63,26 @@
 									unidad
 								{/if}
 							</p>
-							<p>{formatPrice(product.price)}</p>
 						</div>
 					</div>
 				{/each}
 			</div>
 
-			<div class="bg-neutral-200 shadow-lg p-3 rounded-md">
-				<p class="font-semibold mb-2 text-center w-full bg-neutral-400/50 rounded-md py-1">
+			<div class="bg-neutral-200 shadow-md rounded-md pb-2">
+				<p
+					class="font-semibold mb-2 text-center w-full rounded-t-md py-1 bg-neutral-700 text-white"
+				>
 					Información de envío
 				</p>
-				<p class="font-thin">{data.order!.name} {data.order!.lastname}</p>
-				<p>{data.order!.email}</p>
-				<p>{data.order!.phone}</p>
-				<p>{data.order!.province}</p>
-				<p>{data.order!.locality}</p>
-				<p>{data.order!.address}</p>
-				<p>{data.order!.zipCode}</p>
+				<div class="flex flex-col gap-0.5 px-3">
+					<p>{data.order!.name} {data.order!.lastname}</p>
+					<p>{data.order!.email}</p>
+					<p>{data.order!.phone}</p>
+					<p>{data.order!.province}</p>
+					<p>{data.order!.locality}</p>
+					<p>{data.order!.address}</p>
+					<p>{data.order!.zipCode}</p>
+				</div>
 			</div>
 		</div>
 
@@ -64,9 +90,15 @@
 			<div
 				class="w-full bg-green-300 rounded-lg p-3 shadow-md flex flex-row gap-1 items-center justify-center"
 			>
-				<p class="font-thin">Total pagado</p>
-				<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-				<BanknoteArrowDown class="text-green-800" />
+				{#if data.order!.byTransfer && data.order!.paid}
+					<p class="font-thin">Total pagado</p>
+					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
+					<BanknoteArrowDown class="text-green-800" />
+				{:else if data.order!.byTransfer && !data.order!.paid}
+					<p class="font-thin">Total a transferir</p>
+					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
+					<BanknoteArrowDown class="text-green-800" />
+				{/if}
 			</div>
 			<div class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-row gap-1 justify-center">
 				<p>Estado del envío</p>
@@ -82,6 +114,8 @@
 				{:else if data.order!.status === 'DELIVERED'}
 					<span class="font-semibold">Entregado</span>
 					<Handshake class="text-blue-900" />
+				{:else if data.order!.status === 'PENDING'}
+					<span class="font-semibold">Transferencia pendiente</span>
 				{/if}
 			</div>
 		</div>

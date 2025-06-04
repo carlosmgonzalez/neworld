@@ -25,7 +25,7 @@ export interface LocalityResponse {
 }
 
 export interface Localidad {
-	categoria: Categoria;
+	categoria: string;
 	centroide: Centroide;
 	departamento: Departamento;
 	id: string;
@@ -35,23 +35,14 @@ export interface Localidad {
 	provincia: Departamento;
 }
 
-export enum Categoria {
-	Entidad = 'Entidad'
-}
-
 export interface Centroide {
 	lat: number;
 	lon: number;
 }
 
 export interface Departamento {
-	id: string;
-	nombre: Nombre;
-}
-
-export enum Nombre {
-	AlmiranteBrown = 'Almirante Brown',
-	BuenosAires = 'Buenos Aires'
+	id: string | null;
+	nombre: string | null;
 }
 
 export interface Parametros {

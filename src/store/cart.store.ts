@@ -8,7 +8,7 @@ export interface CartItem {
 function createCart() {
 	const initialCart: CartItem[] = (() => {
 		if (typeof window !== 'undefined' && window.localStorage) {
-			const stored = localStorage.getItem('mycart');
+			const stored = localStorage.getItem('cart');
 			try {
 				return stored ? JSON.parse(stored) : [];
 			} catch {
@@ -19,7 +19,7 @@ function createCart() {
 	})();
 
 	const saveCart = (cart: CartItem[]) => {
-		localStorage.setItem('mycart', JSON.stringify(cart));
+		localStorage.setItem('cart', JSON.stringify(cart));
 	};
 
 	const { subscribe, set, update } = writable<CartItem[]>(initialCart);
@@ -64,10 +64,13 @@ function createCart() {
 			}),
 		clear: () =>
 			update(() => {
-				localStorage.setItem('mycart', '[]');
+				saveCart([]);
 				return [];
 			}),
-		set // Permite reemplazar el carrito completo si es necesario
+		set: (items: CartItem[]) => {
+			set(items);
+			saveCart(items);
+		}
 	};
 }
 

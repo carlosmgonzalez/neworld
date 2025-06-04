@@ -13,12 +13,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			where: {
 				id: {
 					in: ids
-				}
+				},
+				isActive: true
 			}
 		});
-
-		// if (products.length < ids.length)
-		// 	return error(404, `Some or all of the products with these ids ${ids} were not found`);
 
 		return json(products);
 	} catch (err) {

@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
 	import { userInfoStore } from '@/store/user-info.store';
-	import { Loader, ShieldCheck, TicketCheck } from '@lucide/svelte';
+	import { BanknoteArrowDown, Loader, ShieldCheck, TicketCheck } from '@lucide/svelte';
 	import { DiscountType } from '@prisma/client';
 	import { get } from 'svelte/store';
 
@@ -70,7 +71,7 @@
 
 	let isLoading = $state(false);
 
-	const handlerSubmit = async (event: Event) => {
+	const createOrder = async (event: Event) => {
 		isLoading = true;
 		event.preventDefault();
 
@@ -93,6 +94,37 @@
 			console.error('Error creating order:', error);
 		} finally {
 			isLoading = false;
+		}
+	};
+
+	let isLoadingTransfer = $state(false);
+
+	const createOrderByTransfer = async (event: Event) => {
+		event.preventDefault();
+		isLoadingTransfer = true;
+
+		try {
+			const response = await fetch('/api/orders/by-transfer', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(order)
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log('Order created successfully:', data);
+				goto(`/order/${data.order.id}`, {
+					replaceState: true
+				});
+			} else {
+				console.error('Error creating order:', response.statusText);
+			}
+		} catch (error) {
+			console.error('Error creating order:', error);
+		} finally {
+			isLoadingTransfer = false;
 		}
 	};
 
@@ -212,7 +244,7 @@
 			</div>
 		</div>
 		<div class="flex flex-col">
-			<div class="rounded-t-lg py-2 bg-blue-500">
+			<div class="rounded-t-lg py-2 bg-black">
 				<p class="text-center text-sm text-white">Información de envío</p>
 			</div>
 			<div class="grid grid-cols-4 gap-4 rounded-b-lg shadow-md bg-white px-2 py-1">
@@ -260,26 +292,47 @@
 		</div>
 	</div>
 
-	<button
-		type="button"
-		class={`mt-4 rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
-		 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
-		onclick={handlerSubmit}
-		disabled={isLoading}
-	>
-		{#if isLoading}
-			<Loader class="animate-spin" />
-		{:else}
-			<img
-				src="/images/logo/mercado-pago-logo.png"
-				alt="mercado-pago-logo"
-				class="w-[110px] h-auto"
-			/>
-		{/if}
-	</button>
-	<div class="w-full flex flex-row justify-center items-center gap-2 mt-3">
-		{#each cardImages as imageUrl, image}
-			<img src={imageUrl} alt="" class="w-10 h-auto rounded-md shadow-md" />
-		{/each}
+	<div class="w-full flex flex-col md:flex-row gap-2 items-start justify-center mt-4">
+		<button
+			type="button"
+			class="w-full rounded-md shadow-md bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg py-2
+		font-semibold hover:cursor-pointer flex flex-row items-center justify-center gap-2"
+			aria-label="pagar con transferencia"
+			onclick={createOrderByTransfer}
+			disabled={isLoadingTransfer}
+		>
+			{#if isLoadingTransfer}
+				<Loader class="animate-spin" />
+			{:else}
+				<BanknoteArrowDown class="" />
+				Por transferencia
+				<span class="text-xs font-thin">(5% de descuento)</span>
+			{/if}
+		</button>
+
+		<div class="flex flex-col w-full">
+			<button
+				type="button"
+				class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
+				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
+				onclick={createOrder}
+				disabled={isLoading}
+			>
+				{#if isLoading}
+					<Loader class="animate-spin" />
+				{:else}
+					<img
+						src="/images/logo/mercado-pago-logo.png"
+						alt="mercado-pago-logo"
+						class="w-[110px] h-auto"
+					/>
+				{/if}
+			</button>
+			<div class="w-full flex flex-row justify-center items-center gap-2 mt-3">
+				{#each cardImages as imageUrl, image}
+					<img src={imageUrl} alt="" class="w-10 h-auto rounded-md shadow-md" />
+				{/each}
+			</div>
+		</div>
 	</div>
 </div>
