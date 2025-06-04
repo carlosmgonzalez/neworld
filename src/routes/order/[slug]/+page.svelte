@@ -98,6 +98,10 @@
 					<p class="font-thin">Total a transferir</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
+				{:else}
+					<p class="font-thin">Total pagado</p>
+					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
+					<BanknoteArrowDown class="text-green-800" />
 				{/if}
 			</div>
 			<div class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-row gap-1 justify-center">
