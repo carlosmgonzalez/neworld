@@ -2,17 +2,32 @@ import prisma from '$lib/prisma/prisma';
 import type { PageServerLoad } from '../$types';
 
 export const load: PageServerLoad = async () => {
-	const shippingPrice = await prisma.config.findFirst({
-		where: {
-			configKey: 'standard_shipping_price'
+	try {
+		const shippingPrice = await prisma.config.findFirst({
+			where: {
+				configKey: 'standard_shipping_price'
+			}
+		});
+
+		if (!shippingPrice) {
+			return {
+				shippingPrice: 0
+			};
 		}
-	});
 
-	if (!shippingPrice) return;
+		if (shippingPrice.type === 'number') {
+			return {
+				shippingPrice: Number(shippingPrice.value)
+			};
+		}
 
-	if (shippingPrice.type === 'number') {
 		return {
-			shippingPrice: Number(shippingPrice.value)
+			shippingPrice: 0
+		};
+	} catch (error) {
+		console.log(error);
+		return {
+			shippingPrice: 0
 		};
 	}
 };
