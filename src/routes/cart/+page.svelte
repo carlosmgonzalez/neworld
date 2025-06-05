@@ -43,8 +43,10 @@
 									<button
 										class="cursor-pointer"
 										onclick={() => {
-											cartStore.removeOne(product.id);
-											invalidate('app:cart');
+											if (product.quantity > 1) {
+												cartStore.removeOne(product.id);
+												invalidate('app:cart');
+											}
 										}}
 									>
 										<Minus size={16} />
@@ -56,8 +58,10 @@
 									<button
 										class="cursor-pointer"
 										onclick={() => {
-											cartStore.addOne(product.id);
-											invalidate('app:cart');
+											if (product.quantity < product.stock) {
+												cartStore.addOne(product.id);
+												invalidate('app:cart');
+											}
 										}}
 									>
 										<Plus size={16} />

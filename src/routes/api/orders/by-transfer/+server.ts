@@ -1,4 +1,6 @@
+import { PUBLIC_BASE_URL } from '$env/static/public';
 import prisma from '@/lib/prisma/prisma';
+import { resend } from '@/lib/resend';
 import { OrderSchema } from '@/lib/schemas/order.schema';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -23,13 +25,28 @@ export const POST: RequestHandler = async ({ request }) => {
 			});
 		}
 
+		await Promise.all(
+			orderData.items.map((item) => {
+				return prisma.product.update({
+					where: {
+						id: item.productId
+					},
+					data: {
+						stock: {
+							decrement: item.quantity
+						}
+					}
+				});
+			})
+		);
+
 		let totalPrice = orderData.items.reduce((acc, item) => {
 			const price = products.find((pr) => pr.id === item.productId)!.price;
-
 			acc += price * item.quantity;
-
 			return acc;
 		}, 0);
+
+		const totalItems = orderData.items.reduce((acc, item) => acc + item.quantity, 0);
 
 		const existCoupon = await prisma.coupon.findUnique({
 			where: {
@@ -44,7 +61,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		}
 
-		const totalItems = orderData.items.reduce((acc, item) => acc + item.quantity, 0);
+		const shippingPrice = await prisma.config.findFirst({
+			where: {
+				configKey: 'standard_shipping_price'
+			}
+		});
+
+		if (shippingPrice && shippingPrice.type === 'number') {
+			totalPrice += Number(shippingPrice.value) * totalItems;
+		}
 
 		const order = await prisma.order.create({
 			data: {
@@ -82,6 +107,36 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 				}
 			}
+		});
+
+		await resend.emails.send({
+			from: 'Neworld <diegogonzalez@neworld.com.ar>',
+			to: [
+				orderData.email,
+				'carlosmgonzalez1998@gmail.com',
+				'diegoalejandrogonzalezcardona@gmail.com'
+			],
+			subject: 'Neworld - Información de compra',
+			html: `
+				<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">
+						<div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 32px; text-align: center;">
+							<h1 style="color: #1a202c; margin-bottom: 16px;">¡Gracias por tu compra!</h1>
+							<p style="color: #333; font-size: 16px; margin-bottom: 24px;">
+								Puedes ver la información de tu compra haciendo clic en el siguiente enlace:
+							</p>
+							<a href="${PUBLIC_BASE_URL}/order/${order.id}" style="display: inline-block; padding: 12px 28px; background: #0070f3; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;">
+								Ver información de la compra
+							</a>
+							<p style="color: #888; font-size: 13px; margin-top: 32px;">
+								Si el boton no te redirige a la pagina este es el url
+								${PUBLIC_BASE_URL}/order/${order.id}
+							</p>
+							<p style="color: #888; font-size: 13px; margin-top: 32px;">
+								¡Gracias por confiar en Neworld!
+							</p>
+						</div>
+					</div>
+			`
 		});
 
 		return json({ order });

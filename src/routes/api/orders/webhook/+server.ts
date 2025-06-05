@@ -1,11 +1,9 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { ACCESS_TOKEN_MP, RESEND_API_KEY } from '$env/static/private';
 import { PUBLIC_BASE_URL } from '$env/static/public';
-import type { PaymentData } from '$lib/interfaces/payment-data.interface';
+import { ACCESS_TOKEN_MP } from '$env/static/private';
 import prisma from '$lib/prisma/prisma';
-import { Resend } from 'resend';
-
-const resend = new Resend(RESEND_API_KEY);
+import { resend } from '$lib/resend';
+import type { PaymentData } from '$lib/interfaces/payment-data.interface';
 
 export const POST: RequestHandler = async ({ url, request }) => {
 	const body = await request.json();
@@ -40,7 +38,7 @@ export const POST: RequestHandler = async ({ url, request }) => {
 			});
 
 			await resend.emails.send({
-				from: 'Neworld <carlosgonzalez@neworld.com.ar>',
+				from: 'Neworld <diegogonzalez@neworld.com.ar>',
 				to: [userEmail, 'carlosmgonzalez1998@gmail.com'],
 				subject: 'Neworld - Información de compra',
 				html: `
@@ -58,7 +56,6 @@ export const POST: RequestHandler = async ({ url, request }) => {
 								${PUBLIC_BASE_URL}/order/${orderId}
 							</p>
 							<p style="color: #888; font-size: 13px; margin-top: 32px;">
-								Si tienes alguna pregunta, responde a este correo.<br>
 								¡Gracias por confiar en Neworld!
 							</p>
 						</div>

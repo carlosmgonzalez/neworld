@@ -30,6 +30,21 @@ export const createOrder = async ({ request }: { request: Request }) => {
 			});
 		}
 
+		await Promise.all(
+			orderData.items.map((item) => {
+				return prisma.product.update({
+					where: {
+						id: item.productId
+					},
+					data: {
+						stock: {
+							decrement: item.quantity
+						}
+					}
+				});
+			})
+		);
+
 		let totalPrice = orderData.items.reduce((acc, item) => {
 			const price = products.find((pr) => pr.id === item.productId)!.price;
 
@@ -37,6 +52,18 @@ export const createOrder = async ({ request }: { request: Request }) => {
 
 			return acc;
 		}, 0);
+
+		const totalItems = orderData.items.reduce((acc, item) => acc + item.quantity, 0);
+
+		const shippingPrice = await prisma.config.findFirst({
+			where: {
+				configKey: 'standard_shipping_price'
+			}
+		});
+
+		if (shippingPrice && shippingPrice.type === 'number') {
+			totalPrice += Number(shippingPrice.value) * totalItems;
+		}
 
 		const existCoupon = await prisma.coupon.findUnique({
 			where: {
@@ -50,8 +77,6 @@ export const createOrder = async ({ request }: { request: Request }) => {
 				totalPrice = totalPrice * ((100 - Number(existCoupon.discountValue)) / 100);
 			}
 		}
-
-		const totalItems = orderData.items.reduce((acc, item) => acc + item.quantity, 0);
 
 		const order = await prisma.order.create({
 			data: {
@@ -98,6 +123,13 @@ export const createOrder = async ({ request }: { request: Request }) => {
 			picture_url: products.find((p) => p.id === item.productId)!.images[0]
 		}));
 
+		if (shippingPrice && shippingPrice.type === 'number') {
+			items = items.map((item) => ({
+				...item,
+				unit_price: item.unit_price + Number(shippingPrice.value)
+			}));
+		}
+
 		if (existCoupon) {
 			if (existCoupon.discountType === 'PERCENTAGE') {
 				items = items.map((item) => ({
@@ -109,7 +141,7 @@ export const createOrder = async ({ request }: { request: Request }) => {
 
 		const payment = await preference.create({
 			body: {
-				items,
+				items: items,
 				notification_url: `${PUBLIC_BASE_URL}/api/orders/webhook`,
 				back_urls: {
 					success: `${PUBLIC_BASE_URL}/order/${order.id}`,

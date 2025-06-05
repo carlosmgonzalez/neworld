@@ -2,7 +2,7 @@ export function formatPrice(num: number): string {
 	// "no quiero que tenga centavos" - trunca los decimales.
 	// Math.trunc() elimina la parte fraccionaria.
 	// Ej: Math.trunc(123.45) -> 123, Math.trunc(-123.45) -> -123
-	const numeroBase = Math.trunc(num);
+	const numeroBase = Math.ceil(num);
 
 	// Determinar si el número es negativo.
 	// Nota: Math.trunc(0) es 0. Math.trunc(-0.5) es 0.

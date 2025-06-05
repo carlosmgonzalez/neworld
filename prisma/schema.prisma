@@ -14,6 +14,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Config {
+  id          Int     @id @default(autoincrement())
+  /// Clave única para identificar el parámetro de configuración (ej: "precio_envio_estandar").
+  configKey   String  @unique
+  /// El valor del parámetro de configuración (ej: "5.99").
+  value       String
+  /// Tipo de dato del valor (ej: "decimal", "string", "boolean"). Útil para parsear el valor.
+  type        String
+  /// Descripción del parámetro para entender su propósito.
+  description String? // Campo opcional
+}
+
 model Product {
   id               String   @id @default(uuid())
   name             String
@@ -76,6 +88,8 @@ model Order {
   status OrderStatus @default(PENDING)
   paid   Boolean     @default(false)
   paidAt DateTime?
+
+  active Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

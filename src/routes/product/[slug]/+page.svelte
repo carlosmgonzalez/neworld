@@ -55,7 +55,7 @@
 							<button
 								class="cursor-pointer"
 								onclick={() => {
-									if (quantity < 10) {
+									if (quantity < data.product.stock) {
 										quantity += 1;
 									}
 								}}

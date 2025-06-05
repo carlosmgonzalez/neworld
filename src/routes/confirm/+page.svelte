@@ -18,12 +18,22 @@
 	let validCoupon = $state(false);
 	let discountAmount = $state(0);
 
-	let subTotalAmount: number = data.detailedCartItems.reduce((acc, val) => {
-		acc += val.price * val.quantity;
+	let subTotalAmount = $state(
+		data.detailedCartItems.reduce((acc, val) => {
+			acc += val.price * val.quantity;
+			return acc;
+		}, 0)
+	);
+
+	let totalAmount = $derived(subTotalAmount);
+	const totalItems = data.detailedCartItems.reduce((acc, val) => {
+		acc += val.quantity;
 		return acc;
 	}, 0);
 
-	let totalAmount = $derived(subTotalAmount);
+	if (data.shippingPrice) {
+		totalAmount += data.shippingPrice * totalItems;
+	}
 
 	const handleValidateCoupon = async (event: Event) => {
 		event.preventDefault();
@@ -48,7 +58,7 @@
 		}
 
 		if (data.discountType === 'PERCENTAGE') {
-			discountAmount = -totalAmount * (data.discountValue / 100);
+			discountAmount = -subTotalAmount * (data.discountValue / 100);
 			totalAmount = totalAmount + discountAmount;
 			isEnteringCoupon = false;
 			validCoupon = true;
@@ -164,7 +174,9 @@
 				{/if}
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Costo de envío:</p>
-					<span class="text-sm"> Gratis </span>
+					<span class="text-sm">
+						{data.shippingPrice === 0 ? 'Gratis' : formatPrice(data.shippingPrice * totalItems)}
+					</span>
 				</div>
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Total:</p>
