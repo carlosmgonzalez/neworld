@@ -158,6 +158,7 @@ export const createOrder = async ({ request }: { request: Request }) => {
 		return json({ order, payment });
 	} catch (err) {
 		console.log(err);
+		console.log('carlos');
 		if (err instanceof z.ZodError) {
 			return json({ issues: err.issues }, { status: 400 });
 		}

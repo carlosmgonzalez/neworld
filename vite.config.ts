@@ -5,6 +5,6 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
-		// allowedHosts: ['63a2-2800-810-478-24ed-298f-a5c9-e531-e79d.ngrok-free.app']
+		allowedHosts: ['32c2-2800-810-478-24ed-a5a9-6190-74b2-b87b.ngrok-free.app']
 	}
 });
