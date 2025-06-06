@@ -1,4 +1,4 @@
-import { getOrderById } from '@/lib/server/services/orders.service';
+import { getOrderById } from '$lib/server/actions/get-order.action';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {

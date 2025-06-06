@@ -15,7 +15,7 @@
 			</div>
 		</div>
 
-		{#if data.order!.byTransfer}
+		{#if data.order!.byTransfer && data.order!.status === 'PENDING'}
 			<div class="flex flex-col bg-neutral-200 rounded-md shadow-md mt-5">
 				<p class="font-semibold text-center w-full bg-neutral-700 text-white rounded-t-md py-1">
 					Información de transferencia

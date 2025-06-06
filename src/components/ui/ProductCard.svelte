@@ -18,6 +18,13 @@
 	<div class="flex flex-col px-2 pb-2 w-full">
 		<h3 class="font-medium text-xs md:text-sm">{product.name}</h3>
 		<p class="text-xxs md:text-xs text-neutral-600 self-start">{product.smallDescription}</p>
-		<p class="text-xs md:text-sm font-semibold mt-2 self-end">{formatPrice(product.price)}</p>
+		<div class="flex flex-row justify-between items-center">
+			{#if product.stock > 0}
+				<p class="text-xs text-emerald-600">En stock</p>
+			{:else}
+				<p class="text-xs text-red-600">Sin stock</p>
+			{/if}
+			<p class="text-xs md:text-sm font-semibold mt-2">{formatPrice(product.price)}</p>
+		</div>
 	</div>
 </a>

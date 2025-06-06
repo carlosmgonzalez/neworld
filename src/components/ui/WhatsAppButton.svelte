@@ -1,5 +1,12 @@
+<script lang="ts">
+	type Props = {
+		whatsappNumber: number;
+	};
+	let props: Props = $props();
+</script>
+
 <div class="fixed bottom-0 right-0 z-50 m-4">
-	<a href="https://wa.me/541138006710" target="_blank" aria-label="WhatsApp">
+	<a href={`https://wa.me/54${props.whatsappNumber}`} target="_blank" aria-label="WhatsApp">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			x="0px"

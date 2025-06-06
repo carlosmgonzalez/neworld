@@ -37,9 +37,36 @@ export const POST: RequestHandler = async ({ url, request }) => {
 				}
 			});
 
+			const orderData = await prisma.order.findUnique({
+				where: {
+					id: orderId
+				},
+				include: {
+					OrderItem: true
+				}
+			});
+
+			if (orderData) {
+				await Promise.all(
+					orderData.OrderItem.map((item) => {
+						return prisma.product.update({
+							where: {
+								id: item.productId
+							},
+							data: {
+								stock: {
+									decrement: item.quantity
+								}
+							}
+						});
+					})
+				);
+			}
+
 			await resend.emails.send({
 				from: 'Neworld <diegogonzalez@neworld.com.ar>',
-				to: [userEmail, 'carlosmgonzalez1998@gmail.com'],
+				to: [userEmail],
+				bcc: ['carlosmgonzalez1998@gmail.com', 'diegoalejandrogonzalezcardona@gmail.com'],
 				subject: 'Neworld - Información de compra',
 				html: `
 					<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">
@@ -52,11 +79,14 @@ export const POST: RequestHandler = async ({ url, request }) => {
 								Ver información de la compra
 							</a>
 							<p style="color: #888; font-size: 13px; margin-top: 32px;">
-								Si el boton no te redirige a la pagina este es el url
+								Si el botón no te redirige a la página este es el url<br>
 								${PUBLIC_BASE_URL}/order/${orderId}
 							</p>
 							<p style="color: #888; font-size: 13px; margin-top: 32px;">
 								¡Gracias por confiar en Neworld!
+							</p>
+							<p style="color: #b91c1c; font-size: 12px; margin-top: 32px;">
+								<strong>Por favor, no respondas a este correo electrónico. Este buzón no es monitoreado.</strong>
 							</p>
 						</div>
 					</div>

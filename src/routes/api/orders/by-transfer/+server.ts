@@ -111,31 +111,31 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		await resend.emails.send({
 			from: 'Neworld <diegogonzalez@neworld.com.ar>',
-			to: [
-				orderData.email,
-				'carlosmgonzalez1998@gmail.com',
-				'diegoalejandrogonzalezcardona@gmail.com'
-			],
+			to: [orderData.email],
+			bcc: ['carlosmgonzalez1998@gmail.com', 'diegoalejandrogonzalezcardona@gmail.com'],
 			subject: 'Neworld - Información de compra',
 			html: `
 				<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">
-						<div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 32px; text-align: center;">
-							<h1 style="color: #1a202c; margin-bottom: 16px;">¡Gracias por tu compra!</h1>
-							<p style="color: #333; font-size: 16px; margin-bottom: 24px;">
-								Puedes ver la información de tu compra haciendo clic en el siguiente enlace:
-							</p>
-							<a href="${PUBLIC_BASE_URL}/order/${order.id}" style="display: inline-block; padding: 12px 28px; background: #0070f3; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;">
-								Ver información de la compra
-							</a>
-							<p style="color: #888; font-size: 13px; margin-top: 32px;">
-								Si el boton no te redirige a la pagina este es el url
-								${PUBLIC_BASE_URL}/order/${order.id}
-							</p>
-							<p style="color: #888; font-size: 13px; margin-top: 32px;">
-								¡Gracias por confiar en Neworld!
-							</p>
-						</div>
+					<div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 32px; text-align: center;">
+						<h1 style="color: #1a202c; margin-bottom: 16px;">¡Gracias por tu compra!</h1>
+						<p style="color: #333; font-size: 16px; margin-bottom: 24px;">
+							Puedes ver la información de tu compra haciendo clic en el siguiente enlace:
+						</p>
+						<a href="${PUBLIC_BASE_URL}/order/${order.id}" style="display: inline-block; padding: 12px 28px; background: #0070f3; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;">
+							Ver información de la compra
+						</a>
+						<p style="color: #888; font-size: 13px; margin-top: 32px;">
+							Si el botón no te redirige a la página este es el url<br>
+							${PUBLIC_BASE_URL}/order/${order.id}
+						</p>
+						<p style="color: #888; font-size: 13px; margin-top: 32px;">
+							¡Gracias por confiar en Neworld!
+						</p>
+						<p style="color: #b91c1c; font-size: 12px; margin-top: 32px;">
+							<strong>Por favor, no respondas a este correo electrónico. Este buzón no es monitoreado.</strong>
+						</p>
 					</div>
+				</div>
 			`
 		});
 

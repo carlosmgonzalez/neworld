@@ -96,6 +96,7 @@
 
 			if (response.ok) {
 				const data = await response.json();
+				cartStore.clear();
 				window.location = data.payment.init_point;
 			} else {
 				console.error('Error creating order:', response.statusText);
@@ -124,7 +125,7 @@
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log('Order created successfully:', data);
+				cartStore.clear();
 				goto(`/order/${data.order.id}`, {
 					replaceState: true
 				});
