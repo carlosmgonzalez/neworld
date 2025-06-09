@@ -9,6 +9,6 @@ export const load: LayoutServerLoad = async () => {
 	});
 
 	return {
-		whatsappNumber: Number(whatsappNumber ?? '1164708561')
+		whatsappNumber: whatsappNumber ? whatsappNumber.value : '1164708561'
 	};
 };

@@ -1,6 +1,6 @@
 <script lang="ts">
 	type Props = {
-		whatsappNumber: number;
+		whatsappNumber: string;
 	};
 	let props: Props = $props();
 </script>
