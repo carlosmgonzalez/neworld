@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Neworld - Descrube la nueva tecnologia</title>
+	<title>Neworld - Descubre la nueva tecnología</title>
 	<meta name="title" content="Neworld - Tienda de tecnología" />
 	<meta name="description" content="Acá podras descubrir el nuevo mundo de la tecnología con AI" />
 
