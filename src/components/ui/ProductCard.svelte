@@ -22,7 +22,7 @@
 	</div>
 
 	<div class="flex flex-col px-2 pb-2 w-full">
-		<h3 class="">
+		<h3 class="font-semibold">
 			{product.name}
 		</h3>
 		<p class="text-sm font-light">
@@ -30,13 +30,20 @@
 		</p>
 		<div class="flex justify-between items-center mt-2">
 			{#if product.stock > 0}
-				<p class="text-sm text-emerald-600">En stock</p>
+				<p class="text-sm font-light text-emerald-600">En stock</p>
 			{:else}
-				<p class="text-sm text-red-600">Sin stock</p>
+				<p class="text-sm font-light text-red-500">Sin stock</p>
 			{/if}
-			<p class="text-sm font-semibold">
-				{formatPrice(product.price)}
-			</p>
+			<div class="flex flex-row items-center gap-1">
+				{#if product.higherPrice}
+					<p class="text-xs line-through text-red-400 pt-1">
+						{formatPrice(product.higherPrice)}
+					</p>
+				{/if}
+				<p class="text-sm font-semibold">
+					{formatPrice(product.price)}
+				</p>
+			</div>
 		</div>
 	</div>
 </a>

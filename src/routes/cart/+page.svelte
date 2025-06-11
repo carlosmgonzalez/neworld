@@ -29,7 +29,7 @@
 						<div class="w-full flex flex-col justify-between gap-1 pr-2 md:flex-row md:gap-4">
 							<div class="flex flex-col gap-1 md:gap-4">
 								<h3>{product?.name}</h3>
-								<p class="text-sm font-thin hidden sm:block">
+								<p class="text-sm font-light hidden sm:block">
 									{product.smallDescription}
 								</p>
 								<p class="text-sm font-semibold">
@@ -84,7 +84,7 @@
 			<div class="flex flex-col rounded-lg shadow-md p-4 bg-white gap-2 h-fit">
 				<h3 class="font-medium">Resumen de compra</h3>
 				<div class="flex justify-between items-center">
-					<p class="font-thin">Total (sin envio) :</p>
+					<p class="font-light">Total (sin envio) :</p>
 					<p class="font-semibold">
 						{formatPrice(
 							data.detailedCartItems.reduce(

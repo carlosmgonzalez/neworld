@@ -91,11 +91,11 @@
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
 				{:else if data.order!.byTransfer && !data.order!.paid}
-					<p class="font-thin">Total a transferir</p>
+					<p class="font-light">Total a transferir</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
 				{:else}
-					<p class="font-thin">Total pagado</p>
+					<p class="font-light">Total pagado</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
 				{/if}
