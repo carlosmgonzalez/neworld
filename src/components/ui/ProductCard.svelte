@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '@splidejs/svelte-splide/css';
 	import type { Product } from '@prisma/client';
 	import { formatPrice } from '@/lib/utils/formatters';
 
@@ -23,39 +22,21 @@
 	</div>
 
 	<div class="flex flex-col px-2 pb-2 w-full">
-		<h3 class="font-medium text-xs md:text-sm">
+		<h3 class="">
 			{product.name}
 		</h3>
-		<p class="text-xxs md:text-xs text-neutral-600">
+		<p class="text-sm font-light">
 			{product.smallDescription}
 		</p>
 		<div class="flex justify-between items-center mt-2">
 			{#if product.stock > 0}
-				<p class="text-xs text-emerald-600">En stock</p>
+				<p class="text-sm text-emerald-600">En stock</p>
 			{:else}
-				<p class="text-xs text-red-600">Sin stock</p>
+				<p class="text-sm text-red-600">Sin stock</p>
 			{/if}
-			<p class="text-xs md:text-sm font-semibold">
+			<p class="text-sm font-semibold">
 				{formatPrice(product.price)}
 			</p>
 		</div>
 	</div>
-
-	<!-- <img
-		src={product.images[0]}
-		alt={product.name}
-		class="w-full h-auto rounded-t-xl aspect-square object-contain"
-	/>
-	<div class="flex flex-col px-2 pb-2 w-full">
-		<h3 class="font-medium text-xs md:text-sm">{product.name}</h3>
-		<p class="text-xxs md:text-xs text-neutral-600 self-start">{product.smallDescription}</p>
-		<div class="flex flex-row justify-between items-center mt-2">
-			{#if product.stock > 0}
-				<p class="text-xs text-emerald-600">En stock</p>
-			{:else}
-				<p class="text-xs text-red-600">Sin stock</p>
-			{/if}
-			<p class="text-xs md:text-sm font-semibold">{formatPrice(product.price)}</p>
-		</div>
-	</div> -->
 </a>

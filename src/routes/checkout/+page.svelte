@@ -3,19 +3,11 @@
 	import { userInfoStore } from '@/store/user-info.store';
 	import { get } from 'svelte/store';
 	import { z } from 'zod/v4';
-	const userInfo = get(userInfoStore);
-
-	import { Combobox } from 'bits-ui';
-	import { Check, ChevronsDown, ChevronsUp, ChevronsUpDown, Loader } from '@lucide/svelte';
-	import { debounce } from '@/lib/utils/debounce';
-	import type {
-		Localidad,
-		LocalityResponse,
-		ProvinceResponse,
-		Provincia
-	} from '@/lib/interfaces/argentina-gob-api-res.interface';
 	import { provincesDb } from '@/lib/database/provinces.db';
 	import { localidadesDb } from '@/lib/database/localities.db';
+	import Selector from '@/components/ui/Selector.svelte';
+
+	const userInfo = get(userInfoStore);
 
 	const formSchema = z.object({
 		name: z.string().min(2, { error: 'El nombre debe tener al menos 2 caracteres' }),
@@ -43,40 +35,18 @@
 	let address = $state(userInfo.address || '');
 	let department = $state(userInfo.department || '');
 	let zipCode = $state(userInfo.zipCode || '');
+
 	let province = $state('');
 	let locality = $state('');
 
-	let queryProvince = $state('');
-	let listProvinces = $state<Provincia[]>(provincesDb);
-
-	let queryLocality = $state('');
-	let listLocalities = $state<Localidad[]>([]);
-
-	const filterProvinces = $derived(
-		queryProvince === ''
-			? listProvinces
-			: listProvinces.filter((province) =>
-					province.nombre.toLowerCase().includes(queryProvince.toLowerCase())
-				)
+	let provinces = $state(provincesDb.map((p) => ({ label: p.nombre, value: p.nombre })));
+	let localities = $derived(
+		province.length > 0
+			? localidadesDb
+					.filter((locality) => locality.provincia.nombre === province)
+					.map((l) => ({ label: l.nombre, value: l.nombre }))
+			: []
 	);
-
-	const handleInputProvince = (event: Event) => {
-		const target = event.target as HTMLInputElement;
-		queryProvince = target.value;
-	};
-
-	const filterLocalities = $derived(
-		queryLocality === ''
-			? listLocalities
-			: listLocalities.filter((locality) =>
-					locality.nombre.toLowerCase().includes(queryLocality.toLowerCase())
-				)
-	);
-
-	const handleInputLocality = (event: Event) => {
-		const target = event.target as HTMLInputElement;
-		queryLocality = target.value;
-	};
 
 	const handleSubmit = async (event: Event) => {
 		formErrors = null;
@@ -115,11 +85,11 @@
 
 <div class="page-container">
 	<h1 class="text-lg font-semibold">Informacion de envio</h1>
-	<a href="/cart" class="underline text-sm text-neutral-600"> Volver al carrito </a>
+	<a href="/cart" class="underline text-sm font-light"> Volver al carrito </a>
 	<form onsubmit={handleSubmit}>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
 			<div class="flex flex-col gap-2 h-fit">
-				<p class="text-sm">Datos personales:</p>
+				<p>Datos personales:</p>
 				<div class="flex flex-col w-full">
 					<label for="name" class="text-xs text-neutral-600"> Nombre </label>
 					<input
@@ -128,11 +98,11 @@
 						id="name"
 						bind:value={name}
 						placeholder="Nombre"
-						class="input-outline-blue"
+						class="input-outline"
 						required
 					/>
 					{#if formErrors?.name && formErrors.name.errors.length > 0}
-						<p class="text-red-500 text-sm">
+						<p class="text-error">
 							{formErrors.name.errors[0]}
 						</p>
 					{/if}
@@ -146,11 +116,11 @@
 						id="lastname"
 						bind:value={lastname}
 						placeholder="Apellido"
-						class="input-outline-blue"
+						class="input-outline"
 						required
 					/>
 					{#if formErrors?.lastname && formErrors.lastname.errors.length > 0}
-						<p class="text-red-500 text-sm">
+						<p class="text-error">
 							{formErrors.lastname.errors[0]}
 						</p>
 					{/if}
@@ -164,54 +134,56 @@
 						id="email"
 						bind:value={email}
 						placeholder="Correo electrónico"
-						class="input-outline-blue"
+						class="input-outline"
 						required
 					/>
 					{#if formErrors?.dni && formErrors.dni.errors.length > 0}
-						<p class="text-red-500 text-sm">
+						<p class="text-error">
 							{formErrors.email.errors[0]}
 						</p>
 					{/if}
 				</div>
 
-				<div class="flex flex-col w-full">
-					<label for="phone" class="text-xs text-neutral-600"> Teléfono </label>
-					<input
-						type="tel"
-						name="phone"
-						id="phone"
-						bind:value={phone}
-						placeholder="011-47029302"
-						class="input-outline-blue"
-						required
-					/>
-					{#if formErrors?.phone && formErrors.phone.errors.length > 0}
-						<p class="text-red-500 text-sm">
-							{formErrors.phone.errors[0]}
-						</p>
-					{/if}
-				</div>
+				<div class="flex flex-row justify-between items-center gap-2">
+					<div class="flex flex-col w-full">
+						<label for="phone" class="text-xs text-neutral-600"> Teléfono </label>
+						<input
+							type="tel"
+							name="phone"
+							id="phone"
+							bind:value={phone}
+							placeholder="011-47029302"
+							class="input-outline"
+							required
+						/>
+						{#if formErrors?.phone && formErrors.phone.errors.length > 0}
+							<p class="text-error">
+								{formErrors.phone.errors[0]}
+							</p>
+						{/if}
+					</div>
 
-				<div class="flex flex-col w-full">
-					<label for="dni" class="text-xs text-neutral-600"> DNI </label>
-					<input
-						type="text"
-						name="dni"
-						id="dni"
-						bind:value={dni}
-						placeholder="DNI"
-						class="input-outline-blue"
-						required
-					/>
-					{#if formErrors?.dni && formErrors.dni.errors.length > 0}
-						<p class="text-red-500 text-sm">
-							{formErrors.dni.errors[0]}
-						</p>
-					{/if}
+					<div class="flex flex-col w-full">
+						<label for="dni" class="text-xs text-neutral-600"> DNI </label>
+						<input
+							type="tel"
+							name="dni"
+							id="dni"
+							bind:value={dni}
+							placeholder="DNI"
+							class="input-outline"
+							required
+						/>
+						{#if formErrors?.dni && formErrors.dni.errors.length > 0}
+							<p class="text-error">
+								{formErrors.dni.errors[0]}
+							</p>
+						{/if}
+					</div>
 				</div>
 			</div>
 			<div class="flex flex-col gap-2 h-fit">
-				<p class="text-sm">Dirección de envío:</p>
+				<p>Dirección de envío:</p>
 
 				<div class="grid grid-cols-4 gap-2">
 					<div class="flex flex-col w-full col-span-3">
@@ -222,11 +194,11 @@
 							id="address"
 							bind:value={address}
 							placeholder="Dirección completa"
-							class="input-outline-blue"
+							class="input-outline"
 							required
 						/>
 						{#if formErrors?.address && formErrors.address.errors.length > 0}
-							<p class="text-red-500 text-sm">
+							<p class="text-error">
 								{formErrors.address.errors[0]}
 							</p>
 						{/if}
@@ -239,149 +211,35 @@
 							id="department"
 							bind:value={department}
 							placeholder="2B"
-							class="input-outline-blue"
+							class="input-outline"
 						/>
 						{#if formErrors?.address && formErrors.address.errors.length > 0}
-							<p class="text-red-500 text-sm">
+							<p class="text-error">
 								{formErrors.address.errors[0]}
 							</p>
 						{/if}
 					</div>
 				</div>
 
-				<div class="flex flex-col w-full">
-					<label for="province" class="text-xs text-neutral-600"> Provincia </label>
-					<Combobox.Root
-						onValueChange={(e) => {
-							province = e;
-							listLocalities = localidadesDb.filter((locality) => locality.provincia.nombre === e);
-						}}
-						value={province}
-						type="single"
-						name="province"
-					>
-						<div
-							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
-						>
-							<Combobox.Input
-								oninput={handleInputProvince}
-								id="province"
-								class="focus:outline-0 w-full"
-								placeholder="Buscar provincia"
-								aria-label="Buscar provincia"
-							/>
-							<Combobox.Trigger class="">
-								<ChevronsUpDown class="text-muted-foreground size-6" />
-							</Combobox.Trigger>
-						</div>
-						<Combobox.Portal>
-							<Combobox.Content
-								class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-hidden z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] select-none rounded-xl border px-1 py-3 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-								sideOffset={10}
-							>
-								<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1">
-									<ChevronsUp class="size-3" />
-								</Combobox.ScrollUpButton>
-								<Combobox.Viewport class="p-1">
-									{#each filterProvinces as province, i (i + province.id)}
-										<Combobox.Item
-											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
-											value={`${province.nombre}`}
-											label={province.nombre}
-										>
-											{#snippet children({ selected })}
-												{province.nombre}
-												{#if selected}
-													<div class="ml-auto">
-														<Check />
-													</div>
-												{/if}
-											{/snippet}
-										</Combobox.Item>
-									{:else}
-										<span class="block px-5 py-2 text-sm text-muted-foreground">
-											Ningun resultado o sigue escribiendo
-										</span>
-									{/each}
-								</Combobox.Viewport>
-								<Combobox.ScrollDownButton class="flex w-full items-center justify-center py-1">
-									<ChevronsDown class="size-3" />
-								</Combobox.ScrollDownButton>
-							</Combobox.Content>
-						</Combobox.Portal>
-					</Combobox.Root>
-					{#if formErrors?.province && formErrors.province.errors.length > 0}
-						<p class="text-red-500 text-sm">
-							{formErrors.province.errors[0]}
-						</p>
-					{/if}
-				</div>
-
-				<div class="flex flex-col w-full">
-					<label for="locality" class="text-xs text-neutral-600"> Localidad </label>
-					<Combobox.Root
-						onValueChange={(e) => {
-							locality = e;
-						}}
-						value={locality}
-						type="single"
-						name="locality"
-					>
-						<div
-							class="flex flex-row justify-between rounded-lg p-2 outline-1 outline-neutral-300 bg-white/80"
-						>
-							<Combobox.Input
-								oninput={handleInputLocality}
-								id="locality"
-								class="focus:outline-0 w-full"
-								placeholder="Buscar localidad"
-								aria-label="Buscar localidad"
-							/>
-							<Combobox.Trigger class="">
-								<ChevronsUpDown class="text-muted-foreground size-6" />
-							</Combobox.Trigger>
-						</div>
-						<Combobox.Portal>
-							<Combobox.Content
-								class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-hidden z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] select-none rounded-xl border px-1 py-3 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
-								sideOffset={10}
-							>
-								<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1">
-									<ChevronsUp class="size-3" />
-								</Combobox.ScrollUpButton>
-								<Combobox.Viewport class="p-1">
-									{#each filterLocalities as locality, i (i + locality.id)}
-										<Combobox.Item
-											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
-											value={`${locality.nombre}`}
-											label={`${locality.nombre} (${locality.municipio.nombre})`}
-										>
-											{#snippet children({ selected })}
-												{`${locality.nombre} (${locality.municipio.nombre})`}
-												{#if selected}
-													<div class="ml-auto">
-														<Check />
-													</div>
-												{/if}
-											{/snippet}
-										</Combobox.Item>
-									{:else}
-										<span class="block px-5 py-2 text-sm text-muted-foreground">
-											Ningun resultado o sigue escribiendo
-										</span>
-									{/each}
-								</Combobox.Viewport>
-								<Combobox.ScrollDownButton class="flex w-full items-center justify-center py-1">
-									<ChevronsDown class="size-3" />
-								</Combobox.ScrollDownButton>
-							</Combobox.Content>
-						</Combobox.Portal>
-					</Combobox.Root>
-					{#if formErrors?.locality && formErrors.locality.errors.length > 0}
-						<p class="text-red-500 text-sm">
-							{formErrors.locality.errors[0]}
-						</p>
-					{/if}
+				<div class="flex flex-col md:flex-row gap-2 w-full justify-between items-center">
+					<div class="flex flex-col w-full">
+						<label for="province" class="text-xs text-neutral-600"> Provincia </label>
+						<Selector options={provinces} bind:value={province} name="provincia" />
+						{#if formErrors?.province && formErrors.province.errors.length > 0}
+							<p class="text-error">
+								{formErrors.province.errors[0]}
+							</p>
+						{/if}
+					</div>
+					<div class="flex flex-col w-full">
+						<label for="locality" class="text-xs text-neutral-600"> Localidad </label>
+						<Selector options={localities} bind:value={locality} name="localidad" />
+						{#if formErrors?.locality && formErrors.locality.errors.length > 0}
+							<p class="text-error">
+								{formErrors.locality.errors[0]}
+							</p>
+						{/if}
+					</div>
 				</div>
 
 				<div class="flex flex-col w-full">
@@ -392,11 +250,11 @@
 						id="zipCode"
 						bind:value={zipCode}
 						placeholder="Código postal"
-						class="input-outline-blue"
+						class="input-outline"
 						required
 					/>
 					{#if formErrors?.zipCode && formErrors.zipCode.errors.length > 0}
-						<p class="text-red-500 text-sm">
+						<p class="text-error">
 							{formErrors.zipCode.errors[0]}
 						</p>
 					{/if}

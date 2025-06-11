@@ -13,7 +13,7 @@
 
 <div class="page-container">
 	<h1 class="text-lg font-semibold">Carrito</h1>
-	<a href="/" class="underline text-sm text-neutral-600"> Seguir comprando </a>
+	<a href="/" class="underline text-sm font-light"> Seguir comprando </a>
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
 		{#if data.detailedCartItems.length === 0}
 			<p>No hay productos en el carrito</p>
@@ -28,11 +28,11 @@
 						/>
 						<div class="w-full flex flex-col justify-between gap-1 pr-2 md:flex-row md:gap-4">
 							<div class="flex flex-col gap-1 md:gap-4">
-								<h3 class="font-thin text-sm">{product?.name}</h3>
-								<p class="text-xs font-light text-neutral-600">
+								<h3>{product?.name}</h3>
+								<p class="text-sm font-thin hidden sm:block">
 									{product.smallDescription}
 								</p>
-								<p class="font-light text-sm">
+								<p class="text-sm font-semibold">
 									{formatPrice(+product.price * product.quantity)}
 								</p>
 							</div>
@@ -82,10 +82,10 @@
 				{/each}
 			</div>
 			<div class="flex flex-col rounded-lg shadow-md p-4 bg-white gap-2 h-fit">
-				<h3 class="font-bold text">Resumen de compra</h3>
+				<h3 class="font-medium">Resumen de compra</h3>
 				<div class="flex justify-between items-center">
-					<p class="font-light text-sm">Total (sin envio) :</p>
-					<p class="font-semibold text-sm">
+					<p class="font-thin">Total (sin envio) :</p>
+					<p class="font-semibold">
 						{formatPrice(
 							data.detailedCartItems.reduce(
 								(acc, product) => acc + +product.price * product.quantity,
@@ -96,7 +96,7 @@
 				</div>
 				<a
 					href="/checkout"
-					class="bg-blue-500 rounded-lg text-white text-sm text-center px-4 py-2 mt-2 hover:bg-blue-600 transition-colors duration-300"
+					class="bg-blue-500 rounded-lg text-white text-center px-4 py-2 mt-2 hover:bg-blue-600 transition-colors duration-300"
 				>
 					Iniciar compra
 				</a>

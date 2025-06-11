@@ -35,12 +35,12 @@
 					class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-blue-200/50 backdrop-blur-3xl md:self-start"
 				>
 					<div class="flex justify-between items-start w-full">
-						<h3 class="font-bold text-2xl">{data.product.name}</h3>
-						<p class="font-light text-xl mt-1">{formatPrice(data.product.price)}</p>
+						<h3 class="font-semibold text-2xl">{data.product.name}</h3>
+						<p class="text-xl mt-1">{formatPrice(data.product.price)}</p>
 					</div>
-					<p class="text-sm text-gray-500">{data.product.smallDescription}</p>
+					<p class="text-sm font-light">{data.product.smallDescription}</p>
 					{#if data.product!.stock > 0}
-						<p class="font-light text-sm text-blue-900">En stock</p>
+						<p class="text-sm font-semibold text-blue-900">En stock</p>
 
 						<div
 							class="flex justify-between items-center bg-white rounded-lg px-2 py-1 w-fit gap-5 mt-4"
@@ -73,7 +73,7 @@
 
 						<button
 							type="button"
-							class="bg-blue-500 w-full text-white px-4 py-2 rounded-lg mt-4 cursor-pointer hover:bg-blue-600 transition-colors duration-300"
+							class="bg-blue-500 w-full text-white font-semibold px-4 py-2 rounded-lg mt-4 cursor-pointer hover:bg-blue-600 transition-colors duration-300"
 							onclick={() => {
 								if (!data.product) return;
 								cartStore.addItem({ productId: data.product.id, quantity });
@@ -84,7 +84,7 @@
 							Agregar al carrito
 						</button>
 					{:else}
-						<p class="font-light text-sm text-red-900">Sin stock</p>
+						<p class="font-semibold text-sm text-red-900">Sin stock</p>
 					{/if}
 					{#if isShowAlert}
 						<div class="w-full">
@@ -100,9 +100,6 @@
 			<h2 class="font-semibold text-lg">Description</h2>
 			<div class="flex flex-col gap-2">
 				{@html formattedDescription}
-				<!-- <p class="text-sm font-light">
-					{data.product.description}
-				</p> -->
 			</div>
 		</div>
 		<div class="w-full flex flex-col flex-wrap md:flex-row items-center justify-center mt-10 gap-3">
@@ -121,7 +118,7 @@
 							{/each}
 						</div>
 					</div>
-					<p class="text-sm font-extralight text-neutral-700">
+					<p class="text-sm text-neutral-700">
 						{review.comment}
 					</p>
 				</li>

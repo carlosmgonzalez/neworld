@@ -156,32 +156,32 @@
 </div>
 <div class="page-container mt-24">
 	<h1 class="text-lg font-semibold">Confirmar Orden</h1>
-	<a href="/checkout" class="underline text-sm text-neutral-600"> Volver </a>
+	<a href="/checkout" class="underline text-sm font-light"> Volver </a>
 
 	<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 md:mt-5 items-start">
 		<div class="flex flex-col gap-2 h-fit">
 			<div class="flex flex-col">
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Subtotal:</p>
-					<span class="text-sm">
+					<span class="text-sm font-semibold">
 						{formatPrice(subTotalAmount)}
 					</span>
 				</div>
 				{#if validCoupon}
 					<div class="flex flex-row justify-between items-center">
 						<p class="text-sm">Cupón de descuento:</p>
-						<span class="text-sm"> {formatPrice(discountAmount)} </span>
+						<span class="text-sm font-semibold"> {formatPrice(discountAmount)} </span>
 					</div>
 				{/if}
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Costo de envío:</p>
-					<span class="text-sm">
+					<span class="text-sm font-semibold">
 						{data.shippingPrice === 0 ? 'Gratis' : formatPrice(data.shippingPrice * totalItems)}
 					</span>
 				</div>
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Total:</p>
-					<span class="text-sm">
+					<span class="text-sm font-semibold">
 						{formatPrice(totalAmount)}
 					</span>
 				</div>
@@ -190,7 +190,7 @@
 					onclick={() => {
 						isEnteringCoupon = !isEnteringCoupon;
 					}}
-					class="rounded-md py-1 border-1 shadow-md border-neutral-300 underline text-center text-sm bg-white mt-2 hover:cursor-pointer"
+					class="rounded-md py-1 border-1 shadow-md border-neutral-300 text-center text-sm bg-white mt-2 hover:cursor-pointer"
 					aria-label="cupon de descuento"
 					hidden={isEnteringCoupon || validCoupon}
 				>
@@ -233,11 +233,8 @@
 							class="w-[120px] h-auto aspect-square rounded-l-lg"
 						/>
 						<div class="flex flex-col gap-1">
-							<h3 class="text-sm font-semibold">{product?.name}</h3>
-							<!-- <p class="text-xs font-light">
-								{product.smallDescription}
-							</p> -->
-							<p class="font-extralight text-xs">
+							<h3 class="text-sm font-medium">{product?.name}</h3>
+							<p class="font-semibold text-xs">
 								{formatPrice(+product.price * product.quantity)}
 							</p>
 
@@ -257,49 +254,31 @@
 			</div>
 		</div>
 		<div class="flex flex-col">
-			<div class="rounded-t-lg py-2 bg-black">
-				<p class="text-center text-sm text-white">Información de envío</p>
+			<div class="rounded-t-lg py-2 bg-blue-300">
+				<p class="text-center text-sm font-semibold">Información de envío</p>
 			</div>
 			<div class="grid grid-cols-4 gap-4 rounded-b-lg shadow-md bg-white px-2 py-1">
 				<div class="flex flex-col gap-1">
-					<p class="text-sm font-black">Nombre:</p>
-					<p class="text-sm font-black">Apellidos:</p>
-					<p class="text-sm font-black">Email:</p>
-					<p class="text-sm font-black">Telefono:</p>
-					<p class="text-sm font-black">Direccion:</p>
-					<p class="text-sm font-black">Dpt:</p>
-					<p class="text-sm font-black">Provincia:</p>
-					<p class="text-sm font-black">Localidad:</p>
-					<p class="text-sm font-black">CP:</p>
+					<p class="text-sm font-semibold">Nombre:</p>
+					<p class="text-sm font-semibold">Apellidos:</p>
+					<p class="text-sm font-semibold">Email:</p>
+					<p class="text-sm font-semibold">Telefono:</p>
+					<p class="text-sm font-semibold">Direccion:</p>
+					<p class="text-sm font-semibold">Dpt:</p>
+					<p class="text-sm font-semibold">Provincia:</p>
+					<p class="text-sm font-semibold">Localidad:</p>
+					<p class="text-sm font-semibold">CP:</p>
 				</div>
 				<div class="col-span-3 flex flex-col gap-1">
-					<p class="text-sm font-light text-neutral-800">
-						{order.name}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.lastname}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.email}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.phone}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{address}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{department}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.province}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.locality}
-					</p>
-					<p class="text-sm font-light text-neutral-800">
-						{order.zipCode}
-					</p>
+					<p class="text-sm font-light">{order.name}</p>
+					<p class="text-sm font-light">{order.lastname}</p>
+					<p class="text-sm font-light">{order.email}</p>
+					<p class="text-sm font-light">{order.phone}</p>
+					<p class="text-sm font-light">{address}</p>
+					<p class="text-sm font-light">{department}</p>
+					<p class="text-sm font-light">{order.province}</p>
+					<p class="text-sm font-light">{order.locality}</p>
+					<p class="text-sm font-light">{order.zipCode}</p>
 				</div>
 			</div>
 		</div>
@@ -308,7 +287,7 @@
 	<div class="w-full flex flex-col md:flex-row gap-2 items-start justify-center mt-4">
 		<button
 			type="button"
-			class="w-full rounded-md shadow-md bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg py-2
+			class="w-full rounded-md shadow-md bg-blue-300 hover:bg-blue-400 hover:shadow-lg py-2
 		font-semibold hover:cursor-pointer flex flex-row items-center justify-center gap-2"
 			aria-label="pagar con transferencia"
 			onclick={createOrderByTransfer}
@@ -318,8 +297,10 @@
 				<Loader class="animate-spin" />
 			{:else}
 				<BanknoteArrowDown class="" />
-				Por transferencia
-				<span class="text-xs font-thin">(5% de descuento)</span>
+				<div class="flex flex-row items-center gap-1">
+					<p>Por transferencia</p>
+					<span class="text-xs font-medium pt-0.5">(5% de descuento)</span>
+				</div>
 			{/if}
 		</button>
 

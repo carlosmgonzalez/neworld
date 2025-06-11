@@ -17,7 +17,7 @@
 
 		{#if data.order!.byTransfer && data.order!.status === 'PENDING'}
 			<div class="flex flex-col bg-neutral-200 rounded-md shadow-md mt-5">
-				<p class="font-semibold text-center w-full bg-neutral-700 text-white rounded-t-md py-1">
+				<p class="font-semibold text-center w-full bg-blue-300 rounded-t-md py-1">
 					Información de transferencia
 				</p>
 				<div class="flex flex-col px-3 py-1">
@@ -45,17 +45,15 @@
 		{/if}
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-2 mt-5">
-			<div class="bg-neutral-200 rounded-lg shadow-lg">
-				<p class="font-semibold text-center w-full bg-neutral-700 text-white rounded-t-md py-1">
-					Productos
-				</p>
+			<div class="bg-white rounded-lg shadow-lg">
+				<p class="font-semibold text-center w-full bg-blue-300 rounded-t-md py-1">Productos</p>
 				{#each data.order!.OrderItem as product}
 					<div class="flex flex-row gap-2 p-2 items-center">
-						<img src={product.images[0]} alt="" class="w-[100px] h-auto rounded-lg shadow-md" />
+						<img src={product.images[0]} alt="" class="w-[130px] h-auto rounded-lg shadow-md" />
 						<div class="flex flex-col">
-							<p class="text-sm">{product.name}</p>
-							<p class="text-sm">{formatPrice(product.price)}</p>
-							<p class="text-xs text-neutral-500">
+							<p>{product.name}</p>
+							<p class="text-sm font-semibold">{formatPrice(product.price)}</p>
+							<p class="text-sm font-light">
 								{product.quantity}
 								{#if product.quantity > 1}
 									unidades
@@ -68,10 +66,8 @@
 				{/each}
 			</div>
 
-			<div class="bg-neutral-200 shadow-md rounded-md pb-2">
-				<p
-					class="font-semibold mb-2 text-center w-full rounded-t-md py-1 bg-neutral-700 text-white"
-				>
+			<div class="bg-white shadow-md rounded-md pb-2">
+				<p class="font-semibold mb-2 text-center w-full rounded-t-md py-1 bg-blue-300">
 					Información de envío
 				</p>
 				<div class="flex flex-col gap-0.5 px-3">
@@ -91,7 +87,7 @@
 				class="w-full bg-green-300 rounded-lg p-3 shadow-md flex flex-row gap-1 items-center justify-center"
 			>
 				{#if data.order!.byTransfer && data.order!.paid}
-					<p class="font-thin">Total pagado</p>
+					<p>Total pagado</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
 				{:else if data.order!.byTransfer && !data.order!.paid}
@@ -107,23 +103,23 @@
 			<div class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-row gap-1 justify-center">
 				<p>Estado del envío</p>
 				{#if data.order!.status === 'PAID'}
-					<span class="font-semibold">En proceso</span>
-					<PackageSearch class="text-blue-900" />
+					<span class="font-semibold">en proceso</span>
+					<PackageSearch class="text-blue-800" />
 				{:else if data.order!.status === 'PACKING'}
-					<span class="font-semibold">Empacando</span>
-					<Package class="text-blue-900" />
+					<span class="font-semibold">empacando</span>
+					<Package class="text-blue-800" />
 				{:else if data.order!.status === 'SHIPPED'}
-					<span class="font-semibold">En camino</span>
-					<Truck class="text-blue-900" />
+					<span class="font-semibold">en camino</span>
+					<Truck class="text-blue-800" />
 				{:else if data.order!.status === 'DELIVERED'}
-					<span class="font-semibold">Entregado</span>
-					<Handshake class="text-blue-900" />
+					<span class="font-semibold">entregado</span>
+					<Handshake class="text-blue-800" />
 				{:else if data.order!.status === 'PENDING'}
-					<span class="font-semibold">Transferencia pendiente</span>
+					<span class="font-semibold">con transferencia pendiente</span>
 				{/if}
 			</div>
 		</div>
-		<span class="text-neutral-600 font-light text-sm text-center mt-5">
+		<span class=" text-sm font-light text-center mt-5">
 			Te enviaremos un correo cuando se actualice el envió
 		</span>
 	{/if}

@@ -38,11 +38,11 @@
 	});
 </script>
 
-<Menubar.Root
+<nav
 	class="fixed z-50 right-0 left-0 top-0 flex justify-between items-center h-14 shadow-md bg-white/80 backdrop-blur-lg"
 >
 	<div class="max-w-[1200px] mx-auto w-full pl-4 pr-5 flex justify-between items-center gap-1">
-		<h1 class="font-bold text-xl flex items-center justify-center">
+		<h1 class="font-semibold text-xl flex items-center justify-center">
 			<img src="/images/logo/logo.png" alt="logo" class="aspect-square w-[45px] h-auto" />
 			<a href="/"> Neworld </a>
 		</h1>
@@ -60,7 +60,6 @@
 				</span>
 				<ShoppingCart />
 			</a>
-			<!-- <Menu /> -->
 		</div>
 	</div>
-</Menubar.Root>
+</nav>
