@@ -120,7 +120,7 @@
   }
 
   .input-outline {
-		@apply p-2 rounded-md text-sm outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-white/80
+		@apply p-2 rounded-md text-sm outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-white
 	}
 
 	.page-container {

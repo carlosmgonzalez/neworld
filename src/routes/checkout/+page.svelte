@@ -144,8 +144,8 @@
 					{/if}
 				</div>
 
-				<div class="flex flex-row justify-between items-center gap-2">
-					<div class="flex flex-col w-full">
+				<div class="flex flex-row justify-between items-center">
+					<div class="flex flex-col w-[49%]">
 						<label for="phone" class="text-xs text-neutral-600"> Teléfono </label>
 						<input
 							type="tel"
@@ -163,7 +163,7 @@
 						{/if}
 					</div>
 
-					<div class="flex flex-col w-full">
+					<div class="flex flex-col w-[49%]">
 						<label for="dni" class="text-xs text-neutral-600"> DNI </label>
 						<input
 							type="tel"
@@ -204,7 +204,7 @@
 						{/if}
 					</div>
 					<div class="flex flex-col w-full">
-						<label for="department" class="text-xs text-neutral-600"> Departamento </label>
+						<label for="department" class="text-xs text-neutral-600"> Dpt </label>
 						<input
 							type="text"
 							name="department"
