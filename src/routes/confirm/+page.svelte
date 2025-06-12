@@ -3,7 +3,13 @@
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
 	import { userInfoStore } from '@/store/user-info.store';
-	import { BanknoteArrowDown, Loader, ShieldCheck, TicketCheck } from '@lucide/svelte';
+	import {
+		BanknoteArrowDown,
+		CircleArrowRight,
+		Loader,
+		ShieldCheck,
+		TicketCheck
+	} from '@lucide/svelte';
 	import { DiscountType } from '@prisma/client';
 	import { get } from 'svelte/store';
 
@@ -206,14 +212,14 @@
 						name="coupon"
 						placeholder="Ingrese el cupon"
 						bind:value={coupon}
-						class="w-full input-outline-blue text-sm"
+						class="w-full input-outline text-sm"
 					/>
 					<button
 						type="submit"
 						aria-label="validar cupon"
-						class="bg-blue-500 flex justify-center items-center px-2 rounded-md shadow-md hover:cursor-pointer"
+						class="bg-blue-300 flex justify-center items-center px-2 rounded-md shadow-md hover:cursor-pointer"
 					>
-						<TicketCheck class="text-white" />
+						<CircleArrowRight class="text-neutral-800" />
 					</button>
 				</form>
 				{#if invalidCoupon}

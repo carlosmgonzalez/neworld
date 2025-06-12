@@ -7,7 +7,7 @@
 	<Carousel.Root class="w-[75%]">
 		<Carousel.Content>
 			{#each images as image}
-				<Carousel.Item>
+				<Carousel.Item class="flex justify-center">
 					<img
 						src={image}
 						alt={image}

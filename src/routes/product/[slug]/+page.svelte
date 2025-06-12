@@ -16,13 +16,6 @@
 		}, 2000);
 	};
 
-	const formatWithLineBreaks = (text: string | undefined) => {
-		if (!text) return '';
-		return text.replaceAll('\\n', '<br/>');
-	};
-
-	const formattedDescription = formatWithLineBreaks(data.product?.description);
-
 	let quantity = $state(1);
 </script>
 
@@ -96,10 +89,10 @@
 			</div>
 		</div>
 		<div class="w-full h-[1px] bg-neutral-200 mt-3 mb-5"></div>
-		<div class="flex flex-col gap-1 rounded-lg">
+		<div class="flex flex-col gap-1.5 rounded-lg">
 			<h2 class="font-semibold text-lg">Description</h2>
 			<div class="flex flex-col gap-2">
-				{@html formattedDescription}
+				{@html data.product.description}
 			</div>
 		</div>
 		<div class="w-full flex flex-col flex-wrap md:flex-row items-center justify-center mt-10 gap-3">
