@@ -4,17 +4,15 @@
 </script>
 
 <div class="w-full flex justify-center items-center">
-	<Carousel.Root class="max-w-xs">
+	<Carousel.Root class="w-[75%]">
 		<Carousel.Content>
 			{#each images as image}
 				<Carousel.Item>
-					<div class="w-full flex justify-center items-start mb-6 md:mb-0">
-						<img
-							src={image}
-							alt=""
-							class="w-[300px] h-auto rounded-lg shadow-lg border-1 border-neutral-200"
-						/>
-					</div>
+					<img
+						src={image}
+						alt={image}
+						class="w-[300px] h-auto rounded-lg shadow-lg border-1 border-neutral-200"
+					/>
 				</Carousel.Item>
 			{/each}
 		</Carousel.Content>

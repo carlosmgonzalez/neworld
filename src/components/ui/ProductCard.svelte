@@ -34,12 +34,12 @@
 			{:else}
 				<p class="text-sm font-light text-red-500">Sin stock</p>
 			{/if}
-			<div class="flex flex-col items-center gap-1">
+			<div class="flex flex-col items-center">
 				<p class="text-sm font-semibold">
 					{formatPrice(product.price)}
 				</p>
 				{#if product.higherPrice}
-					<p class="text-xs line-through text-red-400 pt-1">
+					<p class="text-xs line-through text-red-400">
 						{formatPrice(product.higherPrice)}
 					</p>
 				{/if}

@@ -34,9 +34,9 @@
 				<div
 					class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-blue-200/50 backdrop-blur-3xl md:self-start"
 				>
-					<div class="flex justify-between items-start w-full">
-						<h3 class="font-semibold text-2xl">{data.product.name}</h3>
-						<p class="text-xl mt-1">{formatPrice(data.product.price)}</p>
+					<div class="flex flex-col md:flex-row justify-between items-start w-full">
+						<h3 class="font-semibold text-xl md:text-2xl">{data.product.name}</h3>
+						<p class="text-lg mt-1">{formatPrice(data.product.price)}</p>
 					</div>
 					<p class="text-sm font-light">{data.product.smallDescription}</p>
 					{#if data.product!.stock > 0}
