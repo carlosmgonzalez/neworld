@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { formatPrice } from '@/lib/utils/formatters';
 	import type { PageProps } from './$types';
-	import { BanknoteArrowDown, Handshake, Package, PackageSearch, Truck } from '@lucide/svelte';
+	import {
+		BanknoteArrowDown,
+		Handshake,
+		Package,
+		PackageSearch,
+		SearchX,
+		Truck
+	} from '@lucide/svelte';
 
 	const { data }: PageProps = $props();
 </script>
@@ -122,5 +129,10 @@
 		<span class=" text-sm font-light text-center mt-5">
 			Te enviaremos un correo cuando se actualice el envió
 		</span>
+	{:else}
+		<div class="w-full h-full justify-center items-center">
+			<p class="text-xl font-semibold">Orden no encontrada</p>
+			<SearchX size={60} />
+		</div>
 	{/if}
 </div>
