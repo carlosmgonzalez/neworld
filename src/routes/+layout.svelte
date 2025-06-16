@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
 	import WhatsAppButton from '@/components/ui/WhatsAppButton.svelte';
-	import '../app.css';
 	import Footer from '../components/Footer.svelte';
 	import Navbar from '../components/Navbar.svelte';
+
+	import '../app.css';
 	import type { LayoutProps } from './$types';
 
+	injectSpeedInsights();
 	injectAnalytics();
 
 	let { children, data }: LayoutProps = $props();
