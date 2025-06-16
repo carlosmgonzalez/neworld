@@ -112,7 +112,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		await resend.emails.send({
 			from: 'Neworld <diegogonzalez@neworld.com.ar>',
 			to: [orderData.email],
-			bcc: ['carlosmgonzalez1998@gmail.com', 'diegoalejandrogonzalezcardona@gmail.com'],
+			bcc: [
+				'carlosmgonzalez1998@gmail.com',
+				'diegoalejandrogonzalezcardona@gmail.com',
+				'consultasneworld@gmail.com'
+			],
 			subject: 'Neworld - Información de compra',
 			html: `
 				<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">

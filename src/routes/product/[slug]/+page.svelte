@@ -88,19 +88,35 @@
 								<Plus />
 							</button>
 						</div>
-
-						<button
-							type="button"
-							class="bg-blue-500 w-full text-white font-semibold px-4 py-2 rounded-lg mt-4 cursor-pointer hover:bg-blue-600 transition-colors duration-300"
-							onclick={() => {
-								if (!data.product) return;
-								cartStore.addItem({ productId: data.product.id, quantity });
-								showAlert();
-								quantity = 1; // Reset quantity after adding to cart
-							}}
-						>
-							Agregar al carrito
-						</button>
+						<div class="flex flex-col sm:flex-row justify-between items-center gap-2 mt-4">
+							<button
+								type="button"
+								class="bg-blue-500 w-full text-white font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-300"
+								onclick={() => {
+									if (!data.product) return;
+									cartStore.addItem({ productId: data.product.id, quantity });
+									showAlert();
+									quantity = 1; // Reset quantity after adding to cart
+								}}
+							>
+								Agregar al carrito
+							</button>
+							{#if data.product.linkML}
+								<a
+									href={data.product.linkML}
+									type="button"
+									class="flex itmes-center justify-center bg-yellow-400 w-full text-white font-semibold px-4 py-1.5 rounded-lg cursor-pointer hover:bg-yellow-500 transition-colors duration-300"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img
+										alt="mercado-libre"
+										src="/images/logo/mercado-libre-logo.png"
+										class="w-30 h-auto"
+									/>
+								</a>
+							{/if}
+						</div>
 					{:else}
 						<p class="font-semibold text-sm text-red-900">Sin stock</p>
 					{/if}

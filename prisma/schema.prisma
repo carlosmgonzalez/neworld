@@ -28,13 +28,16 @@ model Product {
   stock            Int
   images           String[]
   infoImages       String[]
-  isActive         Boolean  @default(true)
-  soldCount        Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  priority         Int      @default(9999)
-  higherPrice      Float?
-  Review           Review[]
+
+  linkML String?
+
+  isActive    Boolean  @default(true)
+  soldCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  priority    Int      @default(9999)
+  higherPrice Float?
+  Review      Review[]
 }
 
 model Review {
