@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import WhatsAppButton from '@/components/ui/WhatsAppButton.svelte';
 	import '../app.css';
 	import Footer from '../components/Footer.svelte';
 	import Navbar from '../components/Navbar.svelte';
 	import type { LayoutProps } from './$types';
+
+	injectAnalytics();
 
 	let { children, data }: LayoutProps = $props();
 </script>
