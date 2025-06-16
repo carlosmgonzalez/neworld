@@ -4,6 +4,7 @@
 	import type { PageProps } from './$types';
 	import Carousel from '@/components/ui/Carousel.svelte';
 	import { formatPrice } from '@/lib/utils/formatters';
+	import { PUBLIC_BASE_URL } from '$env/static/public';
 
 	const { data }: PageProps = $props();
 
@@ -18,6 +19,30 @@
 
 	let quantity = $state(1);
 </script>
+
+<svelte:head>
+	<title>Neworld - {data.product?.name}</title>
+	<meta name="title" content="Neworld - {data.product?.name}" />
+	<meta name="description" content={data.product?.smallDescription} />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={`${PUBLIC_BASE_URL}/product/${data.product?.id}`} />
+	<meta property="og:title" content="Neworld - {data.product?.name}" />
+	<meta property="og:description" content={data.product?.smallDescription} />
+	<meta property="og:image" content={data.product?.images[0]} />
+	<meta property="og:image:alt" content={data.product?.name} />
+	<meta property="og:site_name" content="Neworld" />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content={`${PUBLIC_BASE_URL}/product/${data.product?.id}`} />
+	<meta property="twitter:title" content="Neworld - {data.product?.name}" />
+	<meta property="twitter:description" content={data.product?.smallDescription} />
+	<meta property="twitter:image" content={data.product?.images[0]} />
+	<meta property="twitter:image:alt" content={data.product?.name} />
+	<!-- <meta property="twitter:creator" content="@neworld" /> -->
+</svelte:head>
 
 <div class="page-container">
 	{#if data.ok && data.product}
