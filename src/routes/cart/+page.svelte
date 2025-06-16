@@ -28,7 +28,7 @@
 						/>
 						<div class="w-full flex flex-col justify-between gap-1 pr-2 md:flex-row md:gap-4">
 							<div class="flex flex-col gap-1 md:gap-4">
-								<h3>{product?.name}</h3>
+								<a href={`/product/${product.id}`}>{product?.name}</a>
 								<p class="text-sm font-light hidden sm:block">
 									{product.smallDescription}
 								</p>

@@ -30,6 +30,7 @@ model Product {
   infoImages       String[]
 
   linkML String?
+  priceML Float?
 
   isActive    Boolean  @default(true)
   soldCount   Int      @default(0)

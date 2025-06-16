@@ -44,7 +44,6 @@ export const load: PageLoad = async ({ fetch, depends }) => {
 		}
 
 		const products: Product[] = await res.json();
-		console.log(products);
 
 		if (browser) {
 			cartStore.set(
