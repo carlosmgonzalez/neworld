@@ -16,9 +16,9 @@
 	let { children, data }: LayoutProps = $props();
 </script>
 
-<Navbar />
+<Toaster />
 <main class="min-h-screen flex flex-col justify-between">
-	<Toaster />
+	<Navbar />
 	{@render children()}
 	<WhatsAppButton whatsappNumber={data.whatsappNumber} />
 	<Footer />

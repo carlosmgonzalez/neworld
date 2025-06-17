@@ -21,7 +21,7 @@
 			<div class="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
 				<div class="flex flex-col items-center">
 					<ShoppingCart size={70} />
-					<p class="font-light">No hay productos en el carrito</p>
+					<p class="font-light text-center">No hay productos en el carrito</p>
 				</div>
 			</div>
 		{:else}
