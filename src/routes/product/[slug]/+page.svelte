@@ -6,17 +6,11 @@
 	import { formatPrice } from '@/lib/utils/formatters';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import Separator from '@/lib/components/ui/separator/separator.svelte';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
+	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
 
 	const { data }: PageProps = $props();
-
-	let isShowAlert = $state(false);
-
-	const showAlert = () => {
-		isShowAlert = true;
-		setTimeout(() => {
-			isShowAlert = false;
-		}, 2000);
-	};
 
 	let quantity = $state(1);
 </script>
@@ -97,7 +91,15 @@
 									onclick={() => {
 										if (!data.product) return;
 										cartStore.addItem({ productId: data.product.id, quantity });
-										showAlert();
+										toast.success(ToastSuccessfullyCart, {
+											position: 'top-center',
+											componentProps: { description: data.product.name },
+											action: {
+												label: 'Ir al carrito',
+												onClick: () => goto('/cart')
+											},
+											actionButtonStyle: 'background-color: #2b7fff;'
+										});
 										quantity = 1; // Reset quantity after adding to cart
 									}}
 								>
@@ -137,11 +139,6 @@
 						</div>
 					{:else}
 						<p class="font-semibold text-sm text-red-900">Sin stock</p>
-					{/if}
-					{#if isShowAlert}
-						<div class="w-full">
-							<p class="text-center text-sm font-light my-3">Producto agregado</p>
-						</div>
 					{/if}
 					<div class="h-[1px] w-full bg-neutral-200"></div>
 				</div>

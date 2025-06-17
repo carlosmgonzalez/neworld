@@ -8,6 +8,7 @@
 
 	import '../app.css';
 	import type { LayoutProps } from './$types';
+	import { Toaster } from '@/lib/components/ui/sonner';
 
 	injectSpeedInsights();
 	injectAnalytics();
@@ -15,8 +16,9 @@
 	let { children, data }: LayoutProps = $props();
 </script>
 
+<Navbar />
 <main class="min-h-screen flex flex-col justify-between">
-	<Navbar />
+	<Toaster />
 	{@render children()}
 	<WhatsAppButton whatsappNumber={data.whatsappNumber} />
 	<Footer />

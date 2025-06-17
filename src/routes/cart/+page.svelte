@@ -2,13 +2,15 @@
 	import { invalidate } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
-	import { Minus, Plus, X } from '@lucide/svelte';
+	import { Minus, Plus, ShoppingCart, X } from '@lucide/svelte';
 
 	const { data } = $props();
 </script>
 
 {#if data.error}
-	<p>Error to load products</p>
+	<div class="page-container">
+		<p>Error to load products</p>
+	</div>
 {/if}
 
 <div class="page-container">
@@ -16,7 +18,12 @@
 	<a href="/" class="underline text-sm font-light"> Seguir comprando </a>
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
 		{#if data.detailedCartItems.length === 0}
-			<p>No hay productos en el carrito</p>
+			<div class="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
+				<div class="flex flex-col items-center">
+					<ShoppingCart size={70} />
+					<p class="font-light">No hay productos en el carrito</p>
+				</div>
+			</div>
 		{:else}
 			<div class="flex flex-col md:col-span-2 gap-4 h-fit">
 				{#each data.detailedCartItems as product}
