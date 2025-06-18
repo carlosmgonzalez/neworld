@@ -115,6 +115,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -129,5 +130,84 @@
 
   .text-error {
     @apply text-red-400 text-xs font-light
+  }
+
+  /* .markdown-preview {
+		@apply p-4;
+	} */
+
+  .markdown-preview h1 {
+			@apply mt-4 mb-2 border-b-2 pb-2 text-2xl font-bold;
+  }
+
+  .markdown-preview h2 {
+    @apply mt-2 mb-1 text-xl font-bold;
+		letter-spacing: -0.5px;
+  }
+
+  .markdown-preview h3 {
+    @apply mt-2 mb-1 text-lg font-semibold;
+  }
+
+  .markdown-preview p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .markdown-preview strong {
+    @apply font-semibold;
+  }
+
+  .markdown-preview em {
+    @apply text-blue-600 italic;
+  }
+
+  .markdown-preview ul {
+    @apply mb-4 ml-6 list-disc;
+  }
+
+  .markdown-preview ol {
+    @apply mb-4 ml-6 list-decimal;
+  }
+
+  .markdown-preview li {
+    @apply mb-1;
+  }
+
+  .markdown-preview code {
+    @apply rounded px-1 py-0.5 text-sm text-red-700;
+    font-family: 'Fira Code', 'Cascadia Code', monospace;
+  }
+
+  .markdown-preview pre {
+    @apply mb-4 overflow-x-auto rounded-md p-4;
+    border: 1px solid theme('colors.gray.300');
+  }
+
+  .markdown-preview pre code {
+    @apply block bg-transparent p-0 text-inherit;
+  }
+
+  .markdown-preview a {
+    @apply text-blue-700 underline hover:no-underline;
+  }
+
+  .markdown-preview blockquote {
+    @apply mb-4 border-l-4 py-2 pl-4 italic;
+  }
+
+  .markdown-preview hr {
+    @apply my-8 border-t;
+  }
+
+  .markdown-preview table {
+    @apply mb-4 w-full rounded-md border;
+  }
+
+  .markdown-preview th {
+    @apply border bg-neutral-400 px-4 py-2 text-left font-bold;
+  }
+
+  .markdown-preview td {
+    @apply border px-4 py-2;
   }
 }

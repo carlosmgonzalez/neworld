@@ -8,6 +8,7 @@
 	import Separator from '@/lib/components/ui/separator/separator.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { marked } from 'marked';
 	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
 
 	const { data }: PageProps = $props();
@@ -145,11 +146,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="w-full h-[1px] bg-neutral-200 mt-3 mb-5"></div>
 		<div class="flex flex-col gap-1.5 rounded-lg">
-			<h2 class="font-semibold text-lg">Descripción</h2>
-			<div class="flex flex-col gap-2">
-				{@html data.product.description}
+			<div class="markdown-preview">
+				{@html marked(data.product.description)}
 			</div>
 		</div>
 		<div class="w-full flex flex-row flex-wrap items-start justify-start mt-10 gap-3">

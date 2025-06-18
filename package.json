@@ -51,6 +51,7 @@
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/speed-insights": "^1.2.0",
 		"better-auth": "^1.2.8",
+		"marked": "^15.0.12",
 		"mercadopago": "^2.7.0",
 		"resend": "^4.5.1",
 		"zod": "^3.25.7"
