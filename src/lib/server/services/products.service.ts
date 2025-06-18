@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma/prisma';
+import prisma from '$lib/prisma';
 import ProductSchema from '@/lib/schemas/product.schema';
 import QuerySchema from '@/lib/schemas/query.schema';
 import { error, json } from '@sveltejs/kit';

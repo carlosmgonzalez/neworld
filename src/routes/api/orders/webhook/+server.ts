@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 import { ACCESS_TOKEN_MP } from '$env/static/private';
-import prisma from '$lib/prisma/prisma';
+import prisma from '$lib/prisma';
 import { resend } from '$lib/resend';
 import type { PaymentData } from '$lib/interfaces/payment-data.interface';
 

@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_MP } from '$env/static/private';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma/prisma';
+import prisma from '$lib/prisma';
 import { OrderSchema } from '@/lib/schemas/order.schema';
 
 const client = new MercadoPagoConfig({ accessToken: ACCESS_TOKEN_MP });

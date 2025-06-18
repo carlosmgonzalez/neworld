@@ -42,14 +42,15 @@
 <div class="page-container">
 	{#if data.ok && data.product}
 		<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2 py-2">
-			<Carousel images={data.product.images} />
+			<Carousel
+				images={[...data.product.images, ...data.product.ProductImages.map((i) => i.url)]}
+			/>
 			<div class="w-full h-full flex flex-col justify-center items-center">
 				<div
 					class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-blue-200/50 backdrop-blur-3xl md:self-start"
 				>
 					<div class="flex flex-col md:flex-row justify-between items-start w-full">
 						<h3 class="font-semibold text-xl md:text-2xl">{data.product.name}</h3>
-						<!-- <p class="text-lg mt-1">{formatPrice(data.product.price)}</p> -->
 					</div>
 					<p class="text-sm font-light">{data.product.smallDescription}</p>
 					{#if data.product!.stock > 0}
@@ -75,7 +76,7 @@
 							<button
 								class="cursor-pointer"
 								onclick={() => {
-									if (quantity < data.product.stock) {
+									if (quantity < data.product!.stock) {
 										quantity += 1;
 									}
 								}}
@@ -151,9 +152,12 @@
 				{@html data.product.description}
 			</div>
 		</div>
-		<div class="w-full flex flex-col flex-wrap md:flex-row items-center justify-center mt-10 gap-3">
+		<div class="w-full flex flex-row flex-wrap items-start justify-start mt-10 gap-3">
 			{#each data.product.infoImages as imageUrl}
-				<img src={imageUrl} alt="" class="w-[400px] h-auto rounded-lg shadow-md" />
+				<img src={imageUrl} alt="" class="w-[300px] h-auto rounded-lg shadow-md" />
+			{/each}
+			{#each data.product.ProductInfoImages as image}
+				<img src={image.url} alt="" class="w-[300px] h-auto rounded-lg shadow-md" />
 			{/each}
 		</div>
 		<ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-10">

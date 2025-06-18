@@ -1,5 +1,5 @@
 import { PUBLIC_BASE_URL } from '$env/static/public';
-import prisma from '@/lib/prisma/prisma';
+import prisma from '$lib/prisma';
 import { resend } from '@/lib/resend';
 import { OrderSchema } from '@/lib/schemas/order.schema';
 import { error, json, type RequestHandler } from '@sveltejs/kit';

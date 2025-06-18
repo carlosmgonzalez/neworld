@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma/prisma';
+import prisma from '$lib/prisma';
 import { json } from '@sveltejs/kit';
 
 export const validCoupon = async (code: string) => {
