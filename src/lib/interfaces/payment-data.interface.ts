@@ -148,6 +148,7 @@ export interface Amounts {
 export interface Metadata {
 	order_id: string;
 	user_email: string;
+	session_id: string;
 }
 
 export interface FeeDetail {

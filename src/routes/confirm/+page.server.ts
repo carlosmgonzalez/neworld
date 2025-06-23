@@ -109,7 +109,8 @@ export const actions = {
 						},
 						metadata: {
 							order_id: order.id,
-							user_email: order.email
+							user_email: order.email,
+							session_id: session.id
 						}
 					}
 				});
@@ -161,14 +162,25 @@ export const actions = {
 				const totalItems = cartItems.reduce((acc, i) => acc + i.quantity, 0);
 				let totalPrice = cartItems.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
 				let coupon: Coupon | null = null;
+
+				totalPrice = Math.ceil(totalPrice * 0.95);
+				cartItems = cartItems.map((item) => ({
+					...item,
+					product: {
+						...item.product,
+						price: Math.ceil(item.product.price * 0.95)
+					}
+				}));
+
 				if (couponCode) {
 					coupon = await prisma.coupon.findUnique({
 						where: {
 							code: couponCode
 						}
 					});
+
 					if (coupon) {
-						totalPrice = totalPrice - Number(coupon.discountValue);
+						totalPrice = totalPrice - Number(coupon!.discountValue);
 						cartItems = cartItems.map((item) => ({
 							...item,
 							product: {
@@ -202,6 +214,13 @@ export const actions = {
 								}))
 							}
 						}
+					}
+				});
+
+				// Eliminar el carrito
+				await prisma.cart.delete({
+					where: {
+						sessionId: session.id
 					}
 				});
 

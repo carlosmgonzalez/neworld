@@ -11,7 +11,7 @@
 	<h1 class="text-lg font-semibold">Carrito</h1>
 	<a href="/" class="underline text-sm font-light"> Seguir comprando </a>
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-		{#if data.cart?.CartItem.length === 0}
+		{#if data.cart?.CartItem.length === 0 || !data.cart}
 			<div class="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2">
 				<div class="flex flex-col items-center">
 					<ShoppingCart size={70} />

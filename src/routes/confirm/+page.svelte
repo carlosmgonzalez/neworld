@@ -229,12 +229,12 @@
 					formData.append('coupon', coupon);
 				}
 				isLoadingTransfer = true;
-				return async ({ result }) => {
+				return async ({ result, update }) => {
 					isLoadingTransfer = false;
 					if (result.type === 'success') {
 						const data = result.data as { location: string };
-						goto(data.location);
-						console.log('Redirigiendo a:', data.location);
+						await update({ invalidateAll: true, reset: false });
+						goto(data.location, { replaceState: true });
 					}
 				};
 			}}

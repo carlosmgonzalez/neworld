@@ -2,8 +2,8 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 import { ACCESS_TOKEN_MP } from '$env/static/private';
 import prisma from '$lib/prisma';
-import { resend } from '$lib/resend';
 import type { PaymentData } from '$lib/interfaces/payment-data.interface';
+import { sendNewEmail } from '@/lib/resend/send-new-mail';
 
 export const POST: RequestHandler = async ({ url, request }) => {
 	const body = await request.json();
@@ -25,7 +25,9 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		if (paymentData.status === 'approved' && paymentData.status_detail === 'accredited') {
 			const orderId = paymentData.metadata.order_id;
 			const userEmail = paymentData.metadata.user_email;
+			const sessionId = paymentData.metadata.session_id;
 
+			// Actualizar el estado de la orden a "PAID" y ademas marcar la orden como pagada
 			await prisma.order.update({
 				where: {
 					id: orderId
@@ -37,6 +39,7 @@ export const POST: RequestHandler = async ({ url, request }) => {
 				}
 			});
 
+			// Eliminar los productos vendidos del stock:
 			const orderData = await prisma.order.findUnique({
 				where: {
 					id: orderId
@@ -63,14 +66,16 @@ export const POST: RequestHandler = async ({ url, request }) => {
 				);
 			}
 
-			await resend.emails.send({
-				from: 'Neworld <diegogonzalez@neworld.com.ar>',
+			//Eliminar el carrito de compras
+			await prisma.cart.delete({
+				where: {
+					sessionId
+				}
+			});
+
+			//Enviar el mail al comprador y a nosotros sobre la compra
+			await sendNewEmail({
 				to: [userEmail],
-				bcc: [
-					'carlosmgonzalez1998@gmail.com',
-					'diegoalejandrogonzalezcardona@gmail.com',
-					'consultasneworld@gmail.com'
-				],
 				subject: 'Neworld - Información de compra',
 				html: `
 					<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">

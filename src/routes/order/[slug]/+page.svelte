@@ -101,21 +101,15 @@
 			>
 				{#if data.order!.byTransfer && data.order!.paid}
 					<p class="font-light">Total pagado</p>
-					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-					<BanknoteArrowDown class="text-green-800" />
 				{:else if data.order!.byTransfer && data.order!.status === 'PENDING'}
 					<p class="font-light">Total a transferir</p>
-					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-					<BanknoteArrowDown class="text-green-800" />
 				{:else if !data.order!.byTransfer && data.order!.status === 'PENDING'}
 					<p class="font-light">Total sin pagar</p>
-					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-					<BanknoteArrowDown class="text-green-800" />
 				{:else}
 					<p class="font-light">Total pagado</p>
-					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-					<BanknoteArrowDown class="text-green-800" />
 				{/if}
+				<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
+				<BanknoteArrowDown class="text-green-800" />
 			</div>
 			<div
 				class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-col sm:flex-row gap-1 items-center justify-center"
