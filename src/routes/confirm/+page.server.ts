@@ -117,7 +117,7 @@ export const actions = {
 
 				return {
 					orderId: order.id,
-					initPoint: payment.init_point
+					initPoint: payment.sandbox_init_point
 				};
 			}
 		} catch (e) {
