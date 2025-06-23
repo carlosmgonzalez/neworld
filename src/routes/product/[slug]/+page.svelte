@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Minus, Plus, Star } from '@lucide/svelte';
-	import { cartStore } from '@/store/cart.store';
+	import { Loader, Minus, Plus, Star } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 	import Carousel from '@/components/ui/Carousel.svelte';
 	import { formatPrice } from '@/lib/utils/formatters';
@@ -10,10 +9,12 @@
 	import { goto } from '$app/navigation';
 	import { marked } from 'marked';
 	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
+	import { applyAction, enhance } from '$app/forms';
 
 	const { data }: PageProps = $props();
 
 	let quantity = $state(1);
+	let loading = $state(false);
 </script>
 
 <svelte:head>
@@ -87,26 +88,41 @@
 						</div>
 						<div class="flex flex-col sm:flex-row justify-between items-start gap-2 mt-4">
 							<div class="flex flex-col w-full">
-								<button
-									type="button"
-									class="bg-blue-500 w-full text-white font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-300"
-									onclick={() => {
-										if (!data.product) return;
-										cartStore.addItem({ productId: data.product.id, quantity });
-										toast.success(ToastSuccessfullyCart, {
-											position: 'top-center',
-											componentProps: { description: data.product.name },
-											action: {
-												label: 'Ir al carrito',
-												onClick: () => goto('/cart')
-											},
-											actionButtonStyle: 'background-color: #2b7fff;'
-										});
-										quantity = 1; // Reset quantity after adding to cart
+								<form
+									method="POST"
+									action="?/addProduct"
+									use:enhance={() => {
+										loading = true;
+										return async ({ update }) => {
+											loading = false;
+											await update();
+											quantity = 1;
+
+											toast.success(ToastSuccessfullyCart, {
+												position: 'top-center',
+												componentProps: { description: data.product!.name },
+												action: {
+													label: 'Ir al carrito',
+													onClick: () => goto('/cart')
+												},
+												actionButtonStyle: 'background-color: #2b7fff;'
+											});
+										};
 									}}
 								>
-									Agregar al carrito
-								</button>
+									<input type="text" name="productId" value={data.product.id} hidden />
+									<input type="text" name="quantity" bind:value={quantity} hidden />
+									<button
+										type="submit"
+										class="bg-blue-500 flex flex-row justify-center w-full text-white font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-300"
+									>
+										{#if loading}
+											<Loader size={20} class="animate-spin" />
+										{:else}
+											Agregar al carrito
+										{/if}
+									</button>
+								</form>
 								<p class="font-light text-center">
 									Precio final
 									<span class="font-semibold">{formatPrice(data.product.price)} </span>

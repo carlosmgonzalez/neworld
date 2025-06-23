@@ -1,22 +1,18 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { cartStore } from '@/store/cart.store';
 	import { userInfoStore } from '@/store/user-info.store';
-	import {
-		BanknoteArrowDown,
-		CircleArrowRight,
-		Loader,
-		ShieldCheck,
-		TicketCheck
-	} from '@lucide/svelte';
+	import { BanknoteArrowDown, CircleArrowRight, Loader, ShieldCheck } from '@lucide/svelte';
 	import { DiscountType } from '@prisma/client';
 	import { get } from 'svelte/store';
 
 	const { data } = $props();
 
-	const cart = get(cartStore);
-	const { department, address, ...userInfo } = get(userInfoStore);
+	// let userInfo = $derived(data.userInfo!);
+
+	// const { department, address, ...userInfo } = get(userInfoStore);
 
 	let isEnteringCoupon = $state(false);
 	let coupon = $state('');
@@ -24,22 +20,24 @@
 	let validCoupon = $state(false);
 	let discountAmount = $state(0);
 
-	let subTotalAmount = $state(
-		data.detailedCartItems.reduce((acc, val) => {
-			acc += val.price * val.quantity;
+	let subTotalAmount = $state(0);
+	let totalItems = $state(0);
+
+	if (data.cart) {
+		subTotalAmount = data.cart.CartItem.reduce((acc, val) => {
+			acc += val.product.price * val.quantity;
 			return acc;
-		}, 0)
-	);
+		}, 0);
 
-	let totalAmount = $derived(subTotalAmount);
-	const totalItems = data.detailedCartItems.reduce((acc, val) => {
-		acc += val.quantity;
-		return acc;
-	}, 0);
-
-	if (data.shippingPrice) {
-		totalAmount += data.shippingPrice * totalItems;
+		totalItems = data.cart.CartItem.reduce((acc, val) => {
+			acc += val.quantity;
+			return acc;
+		}, 0);
 	}
+
+	let totalAmount = $derived(
+		subTotalAmount + (data.shippingPrice ? data.shippingPrice * totalItems : 0)
+	);
 
 	const handleValidateCoupon = async (event: Event) => {
 		event.preventDefault();
@@ -73,9 +71,8 @@
 	};
 
 	let order = $state({
-		items: cart,
-		...userInfo,
-		address: address + ' ' + department,
+		// items: data,
+		...data.userInfo,
 		coupon: ''
 	});
 
@@ -88,8 +85,8 @@
 	let isLoading = $state(false);
 
 	const createOrder = async (event: Event) => {
-		isLoading = true;
 		event.preventDefault();
+		isLoading = true;
 
 		try {
 			const response = await fetch('/api/orders', {
@@ -229,25 +226,25 @@
 				{/if}
 			</div>
 			<div class="flex flex-col gap-4 h-fit">
-				{#each data.detailedCartItems as product}
+				{#each data.cart!.CartItem as item (item.productId)}
 					<div
 						class="flex flex-row gap-2 md:gap-4 pr-1 items-center rounded-lg shadow bg-blue-200/50"
 					>
 						<img
-							src={product.images[0]}
-							alt={product.description}
+							src={item.product.images[0]}
+							alt={item.product.description}
 							class="w-[120px] h-auto aspect-square rounded-l-lg"
 						/>
 						<div class="flex flex-col gap-1">
-							<h3 class="text-sm font-medium">{product?.name}</h3>
+							<h3 class="text-sm font-medium">{item.product.name}</h3>
 							<p class="font-semibold text-xs">
-								{formatPrice(+product.price * product.quantity)}
+								{formatPrice(+item.product.price * item.quantity)}
 							</p>
 
 							<div class="flex flex-row gap-2 items-center">
 								<p class="text-xs">
-									{product.quantity}
-									{#if product.quantity > 1}
+									{item.quantity}
+									{#if item.quantity > 1}
 										unidades
 									{:else}
 										unidad
@@ -270,7 +267,6 @@
 					<p class="text-sm font-semibold">Email:</p>
 					<p class="text-sm font-semibold">Telefono:</p>
 					<p class="text-sm font-semibold">Direccion:</p>
-					<p class="text-sm font-semibold">Dpt:</p>
 					<p class="text-sm font-semibold">Provincia:</p>
 					<p class="text-sm font-semibold">Localidad:</p>
 					<p class="text-sm font-semibold">CP:</p>
@@ -280,8 +276,7 @@
 					<p class="text-sm font-light">{order.lastname}</p>
 					<p class="text-sm font-light">{order.email}</p>
 					<p class="text-sm font-light">{order.phone}</p>
-					<p class="text-sm font-light">{address}</p>
-					<p class="text-sm font-light">{department}</p>
+					<p class="text-sm font-light">{order.address}</p>
 					<p class="text-sm font-light">{order.province}</p>
 					<p class="text-sm font-light">{order.locality}</p>
 					<p class="text-sm font-light">{order.zipCode}</p>
@@ -311,7 +306,7 @@
 		</button>
 
 		<div class="flex flex-col w-full">
-			<button
+			<!-- <button
 				type="button"
 				class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
 				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
@@ -327,7 +322,21 @@
 						class="w-[110px] h-auto"
 					/>
 				{/if}
-			</button>
+			</button> -->
+			<form method="POST" action="?/createOrder" use:enhance>
+				<button
+					type="submit"
+					class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
+				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
+				>
+					<img
+						src="/images/logo/mercado-pago-logo.png"
+						alt="mercado-pago-logo"
+						class="w-[110px] h-auto"
+					/>
+				</button>
+			</form>
+
 			<div class="w-full flex flex-row justify-center items-center gap-2 mt-3">
 				{#each cardImages as imageUrl, image}
 					<img src={imageUrl} alt="" class="w-10 h-auto rounded-md shadow-md" />

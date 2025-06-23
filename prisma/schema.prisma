@@ -42,6 +42,7 @@ model Product {
   Review            Review[]
   ProductImages     ProductImages[]
   ProductInfoImages ProductInfoImages[]
+  CartItem          CartItem[]
 }
 
 model ProductImages {
@@ -74,24 +75,27 @@ model Review {
 }
 
 model Order {
-  id         String      @id @default(uuid())
+  id         String  @id @default(uuid())
   totalItems Int
   totalPrice Float
   name       String
   lastname   String
   email      String
-  province   String
   address    String
+  locality   String  @default("no incluido") @db.VarChar(255)
+  province   String
   zipCode    String
   phone      String
   dni        String
-  status     OrderStatus @default(PENDING)
-  paid       Boolean     @default(false)
-  paidAt     DateTime?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  locality   String      @default("no incluido") @db.VarChar(255)
   couponId   String?
+
+  status OrderStatus @default(PENDING)
+  paid   Boolean     @default(false)
+  paidAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   byTransfer Boolean     @default(false)
   active     Boolean     @default(true)
   coupon     Coupon?     @relation(fields: [couponId], references: [id])
@@ -148,20 +152,23 @@ model User {
   updatedAt     DateTime
   accounts      Account[]
   sessions      Session[]
+  Cart          Cart[]
 
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String    @id @default(uuid())
   expiresAt DateTime
-  token     String   @unique
-  createdAt DateTime
-  updatedAt DateTime
+  token     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   ipAddress String?
   userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Cart      Cart?
+  UserInfo  UserInfo?
 
   @@map("session")
 }
@@ -194,6 +201,42 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String?    @unique
+  session   Session?   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  CartItem  CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @default(1)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+}
+
+model UserInfo {
+  id       String @id @default(uuid())
+  name     String
+  lastname String
+  email    String
+  address  String
+  locality String
+  province String
+  zipCode  String
+  phone    String
+  dni      String
+
+  sessionId String?  @unique
+  session   Session? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model UserAccount {

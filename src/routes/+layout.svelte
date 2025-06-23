@@ -18,7 +18,7 @@
 
 <Toaster />
 <main class="min-h-screen flex flex-col justify-between">
-	<Navbar />
+	<Navbar cart={data.cart} />
 	{@render children()}
 	<WhatsAppButton whatsappNumber={data.whatsappNumber} />
 	<Footer />
