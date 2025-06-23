@@ -12,7 +12,12 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		queryParams[key] = value;
 	}
 
+	console.log('Se ejecuto el webhook de mp');
+	console.log({ body, queryParams });
+
 	if (body.type === 'payment') {
+		console.log('Paso el payment y se ejecutara el fetch para obtener la informacion del payment');
+
 		const res = await fetch(`https://api.mercadopago.com/v1/payments/${body.data.id}`, {
 			method: 'GET',
 			headers: {
@@ -21,6 +26,8 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		});
 
 		const paymentData: PaymentData = await res.json();
+
+		console.log({ paymentData });
 
 		if (paymentData.status === 'approved' && paymentData.status_detail === 'accredited') {
 			const orderId = paymentData.metadata.order_id;
