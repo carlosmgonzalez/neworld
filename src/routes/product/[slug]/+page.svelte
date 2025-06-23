@@ -9,12 +9,12 @@
 	import { goto } from '$app/navigation';
 	import { marked } from 'marked';
 	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 
 	const { data }: PageProps = $props();
 
 	let quantity = $state(1);
-	let loading = $state(false);
+	let isLoading = $state(false);
 </script>
 
 <svelte:head>
@@ -92,9 +92,9 @@
 									method="POST"
 									action="?/addProduct"
 									use:enhance={() => {
-										loading = true;
+										isLoading = true;
 										return async ({ update }) => {
-											loading = false;
+											isLoading = false;
 											await update();
 											quantity = 1;
 
@@ -115,8 +115,9 @@
 									<button
 										type="submit"
 										class="bg-blue-500 flex flex-row justify-center w-full text-white font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-300"
+										disabled={isLoading}
 									>
-										{#if loading}
+										{#if isLoading}
 											<Loader size={20} class="animate-spin" />
 										{:else}
 											Agregar al carrito

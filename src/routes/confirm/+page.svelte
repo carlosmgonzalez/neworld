@@ -2,17 +2,11 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
-	import { cartStore } from '@/store/cart.store';
-	import { userInfoStore } from '@/store/user-info.store';
 	import { BanknoteArrowDown, CircleArrowRight, Loader, ShieldCheck } from '@lucide/svelte';
 	import { DiscountType } from '@prisma/client';
-	import { get } from 'svelte/store';
+	import type { PageProps } from './$types';
 
-	const { data } = $props();
-
-	// let userInfo = $derived(data.userInfo!);
-
-	// const { department, address, ...userInfo } = get(userInfoStore);
+	const { data }: PageProps = $props();
 
 	let isEnteringCoupon = $state(false);
 	let coupon = $state('');
@@ -36,7 +30,8 @@
 	}
 
 	let totalAmount = $derived(
-		subTotalAmount + (data.shippingPrice ? data.shippingPrice * totalItems : 0)
+		subTotalAmount
+		// + (data.shippingPrice ? data.shippingPrice * totalItems : 0)
 	);
 
 	const handleValidateCoupon = async (event: Event) => {
@@ -55,6 +50,8 @@
 
 		if (!data.valid) {
 			invalidCoupon = true;
+			coupon = '';
+			validCoupon = false;
 			setTimeout(() => {
 				invalidCoupon = false;
 			}, 2000);
@@ -68,79 +65,18 @@
 			validCoupon = true;
 			return;
 		}
-	};
 
-	let order = $state({
-		// items: data,
-		...data.userInfo,
-		coupon: ''
-	});
-
-	$effect(() => {
-		if (validCoupon) {
-			order.coupon = coupon;
+		if (data.discountType === 'FIXED_AMOUNT') {
+			discountAmount = -data.discountValue;
+			totalAmount = totalAmount + discountAmount;
+			isEnteringCoupon = false;
+			validCoupon = true;
+			return;
 		}
-	});
+	};
 
 	let isLoading = $state(false);
-
-	const createOrder = async (event: Event) => {
-		event.preventDefault();
-		isLoading = true;
-
-		try {
-			const response = await fetch('/api/orders', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(order)
-			});
-
-			if (response.ok) {
-				const data = await response.json();
-				cartStore.clear();
-				window.location = data.payment.init_point;
-			} else {
-				console.error('Error creating order:', response.statusText);
-			}
-		} catch (error) {
-			console.error('Error creating order:', error);
-		} finally {
-			isLoading = false;
-		}
-	};
-
 	let isLoadingTransfer = $state(false);
-
-	const createOrderByTransfer = async (event: Event) => {
-		event.preventDefault();
-		isLoadingTransfer = true;
-
-		try {
-			const response = await fetch('/api/orders/by-transfer', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(order)
-			});
-
-			if (response.ok) {
-				const data = await response.json();
-				cartStore.clear();
-				goto(`/order/${data.order.id}`, {
-					replaceState: true
-				});
-			} else {
-				console.error('Error creating order:', response.statusText);
-			}
-		} catch (error) {
-			console.error('Error creating order:', error);
-		} finally {
-			isLoadingTransfer = false;
-		}
-	};
 
 	const cardImages = [
 		'https://res.cloudinary.com/difikt7so/image/upload/v1748530294/neworld/bi9h6g5y4e6rrivxr4v2.png',
@@ -179,7 +115,8 @@
 				<div class="flex flex-row justify-between items-center">
 					<p class="text-sm">Costo de envío:</p>
 					<span class="text-sm font-semibold">
-						{data.shippingPrice === 0 ? 'Gratis' : formatPrice(data.shippingPrice * totalItems)}
+						Gratis
+						<!-- {data.shippingPrice === 0 ? 'Gratis' : formatPrice(data.shippingPrice * totalItems)} -->
 					</span>
 				</div>
 				<div class="flex flex-row justify-between items-center">
@@ -272,68 +209,92 @@
 					<p class="text-sm font-semibold">CP:</p>
 				</div>
 				<div class="col-span-3 flex flex-col gap-1">
-					<p class="text-sm font-light">{order.name}</p>
-					<p class="text-sm font-light">{order.lastname}</p>
-					<p class="text-sm font-light">{order.email}</p>
-					<p class="text-sm font-light">{order.phone}</p>
-					<p class="text-sm font-light">{order.address}</p>
-					<p class="text-sm font-light">{order.province}</p>
-					<p class="text-sm font-light">{order.locality}</p>
-					<p class="text-sm font-light">{order.zipCode}</p>
+					<p class="text-sm font-light">{data.userInfo?.name}</p>
+					<p class="text-sm font-light">{data.userInfo?.lastname}</p>
+					<p class="text-sm font-light">{data.userInfo?.email}</p>
+					<p class="text-sm font-light">{data.userInfo?.phone}</p>
+					<p class="text-sm font-light">{data.userInfo?.address}</p>
+					<p class="text-sm font-light">{data.userInfo?.province}</p>
+					<p class="text-sm font-light">{data.userInfo?.locality}</p>
+					<p class="text-sm font-light">{data.userInfo?.zipCode}</p>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="w-full flex flex-col md:flex-row gap-2 items-start justify-center mt-4">
-		<button
-			type="button"
-			class="w-full rounded-md shadow-md bg-blue-300 hover:bg-blue-400 hover:shadow-lg py-2
-		font-semibold hover:cursor-pointer flex flex-row items-center justify-center gap-2"
-			aria-label="pagar con transferencia"
-			onclick={createOrderByTransfer}
-			disabled={isLoadingTransfer}
+		<form
+			method="POST"
+			action="?/createOrderWithTransfer"
+			class="w-full"
+			use:enhance={({ formData }) => {
+				if (validCoupon && coupon.length > 0) {
+					formData.append('coupon', coupon);
+				}
+				isLoadingTransfer = true;
+				return async ({ result }) => {
+					isLoadingTransfer = false;
+					if (result.type === 'success') {
+						const data = result.data as { location: string };
+						goto(data.location);
+						console.log('Redirigiendo a:', data.location);
+					}
+				};
+			}}
 		>
-			{#if isLoadingTransfer}
-				<Loader class="animate-spin" />
-			{:else}
-				<BanknoteArrowDown class="" />
-				<div class="flex flex-row items-center gap-1">
-					<p>Por transferencia</p>
-					<span class="text-xs font-medium pt-0.5">(5% de descuento)</span>
-				</div>
-			{/if}
-		</button>
-
-		<div class="flex flex-col w-full">
-			<!-- <button
-				type="button"
-				class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
-				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
-				onclick={createOrder}
-				disabled={isLoading}
+			<button
+				type="submit"
+				class="w-full rounded-md shadow-md bg-blue-300 hover:bg-blue-400 hover:shadow-lg py-2
+					font-semibold hover:cursor-pointer flex flex-row items-center justify-center gap-2"
+				disabled={isLoadingTransfer}
 			>
-				{#if isLoading}
+				{#if isLoadingTransfer}
 					<Loader class="animate-spin" />
 				{:else}
-					<img
-						src="/images/logo/mercado-pago-logo.png"
-						alt="mercado-pago-logo"
-						class="w-[110px] h-auto"
-					/>
+					<BanknoteArrowDown class="" />
+					<div class="flex flex-row items-center gap-1">
+						<p>Por transferencia</p>
+						<span class="text-xs font-medium pt-0.5">(5% de descuento)</span>
+					</div>
 				{/if}
-			</button> -->
-			<form method="POST" action="?/createOrder" use:enhance>
+			</button>
+		</form>
+
+		<div class="flex flex-col w-full">
+			<form
+				method="POST"
+				action="?/createOrder"
+				use:enhance={({ formData }) => {
+					if (validCoupon && coupon.length > 0) {
+						formData.append('coupon', coupon);
+					}
+					isLoading = true;
+					return async ({ result }) => {
+						isLoading = false;
+						if (result.type === 'success') {
+							console.log(result.data);
+							const data = result.data as { orderId: string; initPoint: string };
+							const initPoint = data.initPoint;
+							window.location.href = initPoint;
+						}
+					};
+				}}
+			>
 				<button
 					type="submit"
 					class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
 				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
+					disabled={isLoading}
 				>
-					<img
-						src="/images/logo/mercado-pago-logo.png"
-						alt="mercado-pago-logo"
-						class="w-[110px] h-auto"
-					/>
+					{#if isLoading}
+						<Loader class="animate-spin" />
+					{:else}
+						<img
+							src="/images/logo/mercado-pago-logo.png"
+							alt="mercado-pago-logo"
+							class="w-[110px] h-auto"
+						/>
+					{/if}
 				</button>
 			</form>
 

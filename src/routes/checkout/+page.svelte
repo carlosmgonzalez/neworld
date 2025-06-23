@@ -5,9 +5,11 @@
 	import Selector from '@/components/ui/Selector.svelte';
 	import { enhance } from '$app/forms';
 	import type { PageProps } from './$types';
+	import { Loader } from '@lucide/svelte';
 
 	const { data }: PageProps = $props();
 	let error = $state(false);
+	let isLoading = $state(false);
 
 	let name = $derived(data.userInfo?.name || '');
 	let lastname = $derived(data.userInfo?.lastname || '');
@@ -36,16 +38,18 @@
 	<form
 		method="POST"
 		use:enhance={({ formData }) => {
+			isLoading = true;
 			formData.append('province', province);
 			formData.append('locality', locality);
 
 			return async ({ result }) => {
+				isLoading = false;
+
 				if (result.type === 'success') {
 					goto('/confirm');
 				}
 
 				if (result.type === 'error') {
-					console.log('Algo malo ocurrio');
 					error = true;
 					setTimeout(() => {
 						error = false;
@@ -185,9 +189,14 @@
 		{/if}
 		<button
 			type="submit"
-			class="bg-blue-500 w-full mt-4 text-white rounded-lg px-4 py-2 shadow hover:shadow-md hover:bg-blue-600 hover:cursor-pointer"
+			class="flex flex-row justify-center bg-blue-500 w-full mt-4 text-white rounded-lg px-4 py-2 shadow hover:shadow-md hover:bg-blue-600 hover:cursor-pointer"
+			disabled={isLoading}
 		>
-			Finalizar el pedido
+			{#if isLoading}
+				<Loader size={20} class="animate-spin" />
+			{:else}
+				Finalizar el pedido
+			{/if}
 		</button>
 	</form>
 </div>

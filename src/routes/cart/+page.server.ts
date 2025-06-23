@@ -8,8 +8,6 @@ export const actions = {
 
 		const session = locals.session;
 
-		console.log('remove one');
-
 		try {
 			const cart = await prisma.cart.findUnique({
 				where: {

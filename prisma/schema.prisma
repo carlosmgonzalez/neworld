@@ -75,19 +75,21 @@ model Review {
 }
 
 model Order {
-  id         String  @id @default(uuid())
+  id         String @id @default(uuid())
   totalItems Int
   totalPrice Float
   name       String
   lastname   String
   email      String
   address    String
-  locality   String  @default("no incluido") @db.VarChar(255)
+  locality   String @default("no incluido") @db.VarChar(255)
   province   String
   zipCode    String
   phone      String
   dni        String
-  couponId   String?
+
+  byTransfer Boolean @default(false)
+  active     Boolean @default(true)
 
   status OrderStatus @default(PENDING)
   paid   Boolean     @default(false)
@@ -96,10 +98,10 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  byTransfer Boolean     @default(false)
-  active     Boolean     @default(true)
-  coupon     Coupon?     @relation(fields: [couponId], references: [id])
-  OrderItem  OrderItem[]
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
+
+  OrderItem OrderItem[]
 }
 
 model OrderItem {

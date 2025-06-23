@@ -1,18 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { invalidate } from '$app/navigation';
 	import { formatPrice } from '@/lib/utils/formatters.js';
-	import { cartStore } from '@/store/cart.store';
-	import { Minus, Plus, ShoppingCart, X } from '@lucide/svelte';
+	import { Loader, Minus, Plus, ShoppingCart, X } from '@lucide/svelte';
 
 	const { data } = $props();
+	let isLoading = $state<Record<string, boolean>>({});
 </script>
-
-<!-- {#if data.error}
-	<div class="page-container">
-		<p>Error to load products</p>
-	</div>
-{/if} -->
 
 <div class="page-container">
 	<h1 class="text-lg font-semibold">Carrito</h1>
@@ -48,8 +41,22 @@
 								<div
 									class="flex justify-center items-center gap-2 shadow-md bg-white rounded-lg px-2 py-1 h-fit"
 								>
-									<form method="POST" action="?/removeOne" use:enhance>
-										<button type="submit" class="cursor-pointer">
+									<form
+										method="POST"
+										action="?/removeOne"
+										use:enhance={() => {
+											isLoading[item.productId] = true;
+											return async ({ update }) => {
+												await update();
+												isLoading[item.productId] = false;
+											};
+										}}
+									>
+										<button
+											type="submit"
+											class="cursor-pointer"
+											disabled={isLoading[item.productId]}
+										>
 											<input type="text" name="productId" value={item.productId} hidden />
 											<Minus size={16} />
 										</button>
@@ -58,26 +65,49 @@
 										class="flex justify-center items-center px-2 bg-neutral-200/80 backdrop-blur-3xl rounded-lg"
 										>{item.quantity}</span
 									>
-									<form method="POST" action="?/addOne" use:enhance>
-										<button type="submit" class="cursor-pointer">
+									<form
+										method="POST"
+										action="?/addOne"
+										use:enhance={() => {
+											isLoading[item.productId] = true;
+											return async ({ update }) => {
+												await update();
+												isLoading[item.productId] = false;
+											};
+										}}
+									>
+										<button
+											type="submit"
+											class="cursor-pointer"
+											disabled={isLoading[item.productId]}
+										>
 											<input type="text" name="productId" value={item.productId} hidden />
 											<Plus size={16} />
 										</button>
 									</form>
 								</div>
-								<!-- <button
-									class="cursor-pointer text-red-700"
-									onclick={() => {
-										cartStore.removeItem(item.product.id);
-										invalidate('app:cart');
+								<form
+									method="POST"
+									action="?/removeAll"
+									use:enhance={() => {
+										isLoading[item.productId] = true;
+										return async ({ update }) => {
+											await update();
+											isLoading[item.productId] = false;
+										};
 									}}
 								>
-									<X size={20} />
-								</button> -->
-								<form method="POST" action="?/removeAll" use:enhance>
-									<button type="submit" class="cursor-pointer text-red-700">
+									<button
+										type="submit"
+										class="cursor-pointer text-red-700"
+										disabled={isLoading[item.productId]}
+									>
 										<input type="text" name="productId" value={item.productId} hidden />
-										<X size={16} />
+										{#if isLoading[item.productId]}
+											<Loader size={16} class="animate-spin" />
+										{:else}
+											<X size={16} />
+										{/if}
 									</button>
 								</form>
 							</div>

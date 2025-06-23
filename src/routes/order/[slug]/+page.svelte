@@ -15,7 +15,9 @@
 
 <div class="page-container">
 	{#if data.ok}
-		<div class="mx-auto flex flex-row items-center gap-1">
+		<div
+			class="mx-auto flex flex-row items-center justify-center py-2 gap-1 bg-blue-300 w-full rounded-md shadow-md"
+		>
 			<div class="flex flex-col items-center md:flex-row md:items-end gap-1">
 				<p class="text-xl">Gracias por tu compra</p>
 				<p class="text-2xl font-semibold">{data.order!.name}</p>
@@ -23,29 +25,33 @@
 		</div>
 
 		{#if data.order!.byTransfer && data.order!.status === 'PENDING'}
-			<div class="flex flex-col bg-neutral-200 rounded-md shadow-md mt-5">
+			<div class="flex flex-col rounded-md shadow-md mt-5 bg-white">
 				<p class="font-semibold text-center w-full bg-blue-300 rounded-t-md py-1">
 					Información de transferencia
 				</p>
 				<div class="flex flex-col px-3 py-1">
-					<p class="text-sm text-neutral-600">
-						Recuerda que debes transferir el monto total a la cuenta bancaria indicada.
+					<p class="font-light text-center">
+						Debes transferir el monto total a la cuenta bancaria indicada.
 					</p>
-					<p class="text-sm text-neutral-600">
+					<p class="font-light text-center">
 						Una vez realizado el pago, envíanos el comprobante a nuestro whatsapp
 					</p>
 					<div class="w-full h-[1px] bg-neutral-300 my-2"></div>
-					<p class="font-semibold text-sm">
+					<p class="font-semibold">
 						Alias:
-						<span class="font-medium text-neutral-700">diego.a.gonzalez.c</span>
+						<span class="font-light">neworld.mp</span>
 					</p>
-					<p class="font-semibold text-sm">
+					<p class="font-semibold">
+						CBU:
+						<span class="font-light">0000003100079547648013</span>
+					</p>
+					<p class="font-semibold">
 						Nombre:
-						<span class="font-medium text-neutral-700">Diego Alejandro Gonzalez</span>
+						<span class="font-light">Diego Alejandro Gonzalez</span>
 					</p>
-					<p class="font-semibold text-sm">
+					<p class="font-semibold">
 						Banco:
-						<span class="font-medium text-neutral-700">Mercado Pago</span>
+						<span class="font-light">Mercado Pago</span>
 					</p>
 				</div>
 			</div>
@@ -78,13 +84,13 @@
 					Información de envío
 				</p>
 				<div class="flex flex-col gap-0.5 px-3">
-					<p>{data.order!.name} {data.order!.lastname}</p>
-					<p>{data.order!.email}</p>
-					<p>{data.order!.phone}</p>
-					<p>{data.order!.province}</p>
-					<p>{data.order!.locality}</p>
-					<p>{data.order!.address}</p>
-					<p>{data.order!.zipCode}</p>
+					<p class="font-light">{data.order!.name} {data.order!.lastname}</p>
+					<p class="font-light">{data.order!.email}</p>
+					<p class="font-light">{data.order!.phone}</p>
+					<p class="font-light">{data.order!.province}</p>
+					<p class="font-light">{data.order!.locality}</p>
+					<p class="font-light">{data.order!.address}</p>
+					<p class="font-light">{data.order!.zipCode}</p>
 				</div>
 			</div>
 		</div>
@@ -94,11 +100,15 @@
 				class="w-full bg-green-300 rounded-lg p-3 shadow-md flex flex-row gap-1 items-center justify-center"
 			>
 				{#if data.order!.byTransfer && data.order!.paid}
-					<p>Total pagado</p>
+					<p class="font-light">Total pagado</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
-				{:else if data.order!.byTransfer && !data.order!.paid}
+				{:else if data.order!.byTransfer && data.order!.status === 'PENDING'}
 					<p class="font-light">Total a transferir</p>
+					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
+					<BanknoteArrowDown class="text-green-800" />
+				{:else if !data.order!.byTransfer && data.order!.status === 'PENDING'}
+					<p class="font-light">Total sin pagar</p>
 					<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
 					<BanknoteArrowDown class="text-green-800" />
 				{:else}
@@ -107,26 +117,30 @@
 					<BanknoteArrowDown class="text-green-800" />
 				{/if}
 			</div>
-			<div class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-row gap-1 justify-center">
-				<p>Estado del envío</p>
+			<div
+				class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-col sm:flex-row gap-1 items-center justify-center"
+			>
+				<p class="font-light">Estado del envío</p>
 				{#if data.order!.status === 'PAID'}
-					<span class="font-semibold">en proceso</span>
+					<span class="font-semibold">EN PROCESO</span>
 					<PackageSearch class="text-blue-800" />
 				{:else if data.order!.status === 'PACKING'}
-					<span class="font-semibold">empacando</span>
+					<span class="font-semibold">EMPACANDO</span>
 					<Package class="text-blue-800" />
 				{:else if data.order!.status === 'SHIPPED'}
-					<span class="font-semibold">en camino</span>
+					<span class="font-semibold">EN CAMINO</span>
 					<Truck class="text-blue-800" />
 				{:else if data.order!.status === 'DELIVERED'}
-					<span class="font-semibold">entregado</span>
+					<span class="font-semibold">ENTREGADO</span>
 					<Handshake class="text-blue-800" />
+				{:else if data.order!.status === 'PENDING' && data.order!.byTransfer}
+					<span class="font-semibold">TRANSFERENCIA PENDIENTE</span>
 				{:else if data.order!.status === 'PENDING'}
-					<span class="font-semibold">con transferencia pendiente</span>
+					<span class="font-semibold">ORDEN NO PAGADA</span>
 				{/if}
 			</div>
 		</div>
-		<span class=" text-sm font-light text-center mt-5">
+		<span class=" font-light text-center mt-5">
 			Te enviaremos un correo cuando se actualice el envió
 		</span>
 	{:else}
