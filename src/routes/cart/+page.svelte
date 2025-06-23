@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import { formatPrice } from '@/lib/utils/formatters.js';
 	import { Loader, Minus, Plus, ShoppingCart, X } from '@lucide/svelte';
 
@@ -20,7 +20,7 @@
 			</div>
 		{:else}
 			<div class="flex flex-col md:col-span-2 gap-4 h-fit">
-				{#each data.cart!.CartItem as item (item.product.id)}
+				{#each data.cart!.CartItem as item (item.productId)}
 					<div class="flex flex-row bg-blue-200/50 rounded-lg gap-2 items-center">
 						<img
 							src={item.product.images[0]}
@@ -46,8 +46,9 @@
 										action="?/removeOne"
 										use:enhance={() => {
 											isLoading[item.productId] = true;
-											return async ({ update }) => {
-												await update();
+											return async ({ update, result }) => {
+												await update({ invalidateAll: true, reset: false });
+												await applyAction(result);
 												isLoading[item.productId] = false;
 											};
 										}}
@@ -70,9 +71,11 @@
 										action="?/addOne"
 										use:enhance={() => {
 											isLoading[item.productId] = true;
-											return async ({ update }) => {
-												await update();
-												isLoading[item.productId] = false;
+											return async ({ update, result }) => {
+												if (result.type === 'success') {
+													await update({ invalidateAll: true, reset: false });
+													isLoading[item.productId] = false;
+												}
 											};
 										}}
 									>
@@ -92,7 +95,7 @@
 									use:enhance={() => {
 										isLoading[item.productId] = true;
 										return async ({ update }) => {
-											await update();
+											await update({ invalidateAll: true, reset: false });
 											isLoading[item.productId] = false;
 										};
 									}}

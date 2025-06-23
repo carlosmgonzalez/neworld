@@ -29,10 +29,7 @@
 		}, 0);
 	}
 
-	let totalAmount = $derived(
-		subTotalAmount
-		// + (data.shippingPrice ? data.shippingPrice * totalItems : 0)
-	);
+	let totalAmount = $derived(subTotalAmount);
 
 	const handleValidateCoupon = async (event: Event) => {
 		event.preventDefault();
@@ -272,7 +269,6 @@
 					return async ({ result }) => {
 						isLoading = false;
 						if (result.type === 'success') {
-							console.log(result.data);
 							const data = result.data as { orderId: string; initPoint: string };
 							const initPoint = data.initPoint;
 							window.location.href = initPoint;

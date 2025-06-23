@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import type { Actions } from '@sveltejs/kit';
+import { error, type Actions } from '@sveltejs/kit';
 
 export const actions = {
 	removeOne: async ({ request, locals }) => {
@@ -54,36 +54,43 @@ export const actions = {
 
 		const session = locals.session;
 
-		const cart = await prisma.cart.findUnique({
-			where: {
-				sessionId: session.id
-			}
-		});
-
-		if (cart) {
-			const cartItem = await prisma.cartItem.findFirst({
+		try {
+			const cart = await prisma.cart.findUnique({
 				where: {
-					cartId: cart.id,
-					productId
-				},
-				include: {
-					product: true
+					sessionId: session.id
 				}
 			});
 
-			if (cartItem && cartItem.product.stock > 1) {
-				await prisma.cartItem.updateMany({
+			if (cart) {
+				const cartItem = await prisma.cartItem.findFirst({
 					where: {
 						cartId: cart.id,
 						productId
 					},
-					data: {
-						quantity: {
-							increment: 1
-						}
+					include: {
+						product: true
 					}
 				});
+
+				if (cartItem && cartItem.product.stock > 0) {
+					await prisma.cartItem.updateMany({
+						where: {
+							cartId: cart.id,
+							productId
+						},
+						data: {
+							quantity: {
+								increment: 1
+							}
+						}
+					});
+				}
 			}
+		} catch (e) {
+			console.log(e);
+			return error(304, {
+				message: 'Error al agregar una cantidad al producto'
+			});
 		}
 	},
 	removeAll: async ({ locals, request }) => {

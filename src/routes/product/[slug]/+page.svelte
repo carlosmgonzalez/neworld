@@ -93,20 +93,21 @@
 									action="?/addProduct"
 									use:enhance={() => {
 										isLoading = true;
-										return async ({ update }) => {
+										return async ({ update, result }) => {
+											if (result.type === 'success') {
+												await update({ invalidateAll: true, reset: false });
+												toast.success(ToastSuccessfullyCart, {
+													position: 'top-center',
+													componentProps: { description: data.product!.name },
+													action: {
+														label: 'Ir al carrito',
+														onClick: () => goto('/cart')
+													},
+													actionButtonStyle: 'background-color: #2b7fff;'
+												});
+											}
 											isLoading = false;
-											await update();
 											quantity = 1;
-
-											toast.success(ToastSuccessfullyCart, {
-												position: 'top-center',
-												componentProps: { description: data.product!.name },
-												action: {
-													label: 'Ir al carrito',
-													onClick: () => goto('/cart')
-												},
-												actionButtonStyle: 'background-color: #2b7fff;'
-											});
 										};
 									}}
 								>
@@ -168,7 +169,7 @@
 				{@html marked(data.product.description)}
 			</div>
 		</div>
-		<div class="w-full flex flex-row flex-wrap items-start justify-start mt-10 gap-3">
+		<div class="w-full flex flex-row flex-wrap items-start justify-center mt-10 gap-3">
 			{#each data.product.infoImages as imageUrl}
 				<img src={imageUrl} alt="" class="w-[300px] h-auto rounded-lg shadow-md" />
 			{/each}

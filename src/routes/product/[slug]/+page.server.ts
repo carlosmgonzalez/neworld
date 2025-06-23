@@ -39,8 +39,6 @@ export const actions = {
 
 		const session = locals.session as Session;
 
-		console.log({ productId, quantity, session });
-
 		const cart = await prisma.cart.findFirst({
 			where: {
 				sessionId: session.id

@@ -42,10 +42,11 @@
 			formData.append('province', province);
 			formData.append('locality', locality);
 
-			return async ({ result }) => {
+			return async ({ result, update }) => {
 				isLoading = false;
 
 				if (result.type === 'success') {
+					await update({ invalidateAll: true, reset: false });
 					goto('/confirm');
 				}
 
