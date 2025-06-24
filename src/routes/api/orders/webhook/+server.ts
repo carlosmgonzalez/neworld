@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		}
 	});
 
-	const manifest = `id:${dataID};request-id:${xRequestId};ts:${ts}`;
+	const manifest = `id:${dataID};request-id:${xRequestId};ts:${ts};`;
 
 	const hmac = crypto.createHmac('sha256', SECRET_KEY_MP);
 	hmac.update(manifest);
