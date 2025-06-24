@@ -102,7 +102,6 @@ export const actions = {
 							unit_price: item.product.price,
 							picture_url: item.product.images[0]
 						})),
-						notification_url: `${PUBLIC_BASE_URL}/api/orders/webhook`,
 						back_urls: {
 							success: `${PUBLIC_BASE_URL}/order/${order.id}`,
 							failure: `${PUBLIC_BASE_URL}`,
