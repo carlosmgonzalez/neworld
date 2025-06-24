@@ -59,13 +59,8 @@ export const actions = {
 				await prisma.userInfo.create({
 					data: {
 						...userData,
-						address: userData.address + ' ' + department,
+						address: userData.address + '-' + department,
 						sessionId: session.id
-						// session: {
-						// 	connect: {
-						// 		id: session.id
-						// 	}
-						// }
 					}
 				});
 			}

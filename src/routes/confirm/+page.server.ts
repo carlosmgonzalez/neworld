@@ -3,6 +3,7 @@ import { error, type Actions } from '@sveltejs/kit';
 import preference from '@/lib/mercadopago';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 import type { Coupon } from '@prisma/client';
+import { sendNewEmail } from '@/lib/resend/send-new-mail';
 
 export type CreateOrderActionData = {
 	orderId: string;
@@ -113,6 +114,34 @@ export const actions = {
 							session_id: session.id
 						}
 					}
+				});
+
+				await sendNewEmail({
+					subject: 'Neworld - Pendiente',
+					to: [order.email],
+					html: `
+						<div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 32px 0;">
+							<div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 32px; text-align: center;">
+								<h1 style="color: #1a202c; margin-bottom: 16px;">¡Gracias, esparamos tu tranferencia!</h1>
+								<p style="color: #333; font-size: 16px; margin-bottom: 24px;">
+									Puedes ver la información de tu compra haciendo clic en el siguiente enlace:
+								</p>
+								<a href="${PUBLIC_BASE_URL}/order/${order.id}" style="display: inline-block; padding: 12px 28px; background: #0070f3; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold;">
+									Ver información de la compra
+								</a>
+								<p style="color: #888; font-size: 13px; margin-top: 32px;">
+									Si el botón no te redirige a la página este es el url<br>
+									${PUBLIC_BASE_URL}/order/${order.id}
+								</p>
+								<p style="color: #888; font-size: 13px; margin-top: 32px;">
+									¡Gracias por confiar en Neworld!
+								</p>
+								<p style="color: #b91c1c; font-size: 12px; margin-top: 32px;">
+									<strong>Por favor, no respondas a este correo electrónico. Este buzón no es monitoreado.</strong>
+								</p>
+							</div>
+						</div>
+					`
 				});
 
 				return {
