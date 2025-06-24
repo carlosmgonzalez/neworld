@@ -72,7 +72,7 @@ export const actions = {
 					}
 				});
 
-				if (cartItem && cartItem.product.stock > 0) {
+				if (cartItem && cartItem.product.stock > cartItem.quantity) {
 					await prisma.cartItem.updateMany({
 						where: {
 							cartId: cart.id,

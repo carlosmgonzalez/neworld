@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { createAuthClient } from 'better-auth/svelte';
 	import { Instagram, Facebook } from '@lucide/svelte';
-	import { authClient } from '@/lib/auth/auth-client';
 </script>
 
 <footer

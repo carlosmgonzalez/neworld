@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { Menubar } from 'bits-ui';
 	import { ShoppingCart } from '@lucide/svelte';
-	import { cartStore } from '@/store/cart.store';
 	import type { Cart, CartItem, Product } from '@prisma/client';
 
 	interface Props {
@@ -10,38 +8,7 @@
 
 	const { cart }: Props = $props();
 
-	// const getProductFromDb = (ids: string[]) => {
-	// 	return fetch(`/api/products-details`, {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		body: JSON.stringify(ids)
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.catch((err) => {
-	// 			console.error('Error fetching product:', err);
-	// 			return null;
-	// 		});
-	// };
-
 	let totalItems = $derived(cart ? cart.CartItem.reduce((acc, item) => acc + item.quantity, 0) : 0);
-
-	// $effect(() => {
-	// 	cartStore.subscribe((cart) => {
-	// 		const ids = cart.map((item) => item.productId);
-	// 		getProductFromDb(ids).then((products: Product[]) => {
-	// 			if (products) {
-	// 				totalItems = products.reduce((acc, product) => {
-	// 					const cartItem = cart.find((item) => item.productId === product.id);
-	// 					return acc + (cartItem ? cartItem.quantity : 0);
-	// 				}, 0);
-	// 			} else {
-	// 				totalItems = 0;
-	// 			}
-	// 		});
-	// 	});
-	// });
 </script>
 
 <nav

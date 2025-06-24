@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader, Minus, Plus, Star } from '@lucide/svelte';
+	import { Loader, Minus, Plus } from '@lucide/svelte';
 	import type { PageProps } from './$types';
 	import Carousel from '@/components/ui/Carousel.svelte';
 	import { formatPrice } from '@/lib/utils/formatters';
@@ -10,6 +10,7 @@
 	import { marked } from 'marked';
 	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
 	import { enhance } from '$app/forms';
+	import ReviewsCard from '@/components/ui/ReviewsCard.svelte';
 
 	const { data }: PageProps = $props();
 
@@ -178,20 +179,8 @@
 			{/each}
 		</div>
 		<ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-10">
-			{#each data.product.Review as review}
-				<li class="bg-white shadow-md rounded-lg p-4 flex flex-col">
-					<div class="flex justify-between items-center">
-						<p>{review.name}</p>
-						<div class="flex items-center mb-2">
-							{#each Array(review.rating) as _, i}
-								<Star class="text-yellow-400" />
-							{/each}
-						</div>
-					</div>
-					<p class="text-sm text-neutral-700">
-						{review.comment}
-					</p>
-				</li>
+			{#each data.product.Review as review (review.id)}
+				<ReviewsCard {review} />
 			{/each}
 		</ul>
 	{/if}

@@ -1,13 +1,23 @@
 <script lang="ts">
-	import type { Review } from '$lib/interfaces/review.interface';
+	import { Star } from '@lucide/svelte';
+	import type { Review } from '@prisma/client';
 
-	export let review: Review;
+	interface Props {
+		review: Review;
+	}
+	const { review }: Props = $props();
 </script>
 
-<div
-	class="bg-blue-200/50 backdrop-blur-3xl shadow rounded-xl flex flex-col justify-start gap-1 p-2"
->
-	<h4 class="font-bold self-start">{review.title}</h4>
-	<p class="text-xs text-gray-500">{review.description}</p>
-	<p class="text-xs text-gray-500">Rating: {review.qualification}</p>
-</div>
+<li class="bg-white shadow-md rounded-lg p-4 flex flex-col">
+	<div class="flex justify-between items-center">
+		<p>{review.name}</p>
+		<div class="flex items-center mb-2">
+			{#each Array(review.rating) as _, i}
+				<Star class="text-yellow-500" />
+			{/each}
+		</div>
+	</div>
+	<p class="text-sm text-neutral-700">
+		{review.comment}
+	</p>
+</li>

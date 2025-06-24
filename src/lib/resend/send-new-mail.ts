@@ -10,11 +10,7 @@ export const sendNewEmail = async ({ to, html, subject }: Props) => {
 	await resend.emails.send({
 		from: 'Neworld <no-responder@neworld.com.ar>',
 		to,
-		bcc: [
-			'carlosmgonzalez1998@gmail.com'
-			// 'diegoalejandrogonzalezcardona@gmail.com',
-			// 'consultasneworld@gmail.com'
-		],
+		bcc: ['consultasneworld@gmail.com'],
 		subject,
 		html
 	});

@@ -1,23 +1,46 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { PUBLIC_BASE_URL } from '$env/static/public';
-import { ACCESS_TOKEN_MP } from '$env/static/private';
+import { ACCESS_TOKEN_MP, SECRET_KEY_MP } from '$env/static/private';
 import prisma from '$lib/prisma';
 import type { PaymentData } from '$lib/interfaces/payment-data.interface';
 import { sendNewEmail } from '@/lib/resend/send-new-mail';
+import crypto from 'node:crypto';
 
 export const POST: RequestHandler = async ({ url, request }) => {
 	const body = await request.json();
-	const queryParams: Record<string, string> = {};
-	for (const [key, value] of url.searchParams.entries()) {
-		queryParams[key] = value;
-	}
+	const dataID = url.searchParams.get('data.id');
+	const xSignature = request.headers.get('x-signature');
+	const xRequestId = request.headers.get('x-request-id');
 
-	console.log('Se ejecuto el webhook de mp');
-	console.log({ body, queryParams });
+	if (!xSignature || !xRequestId) return error(404, { message: 'No autorizado' });
+
+	const parts = xSignature.split(',');
+	let ts;
+	let hash;
+
+	parts.forEach((part) => {
+		const [key, value] = part.split('=');
+		if (key && value) {
+			const trimmedKey = key.trim();
+			const trimmedValue = value.trim();
+
+			if (trimmedKey === 'ts') {
+				ts = trimmedValue;
+			} else if (trimmedKey === 'v1') {
+				hash = trimmedValue;
+			}
+		}
+	});
+
+	const manifest = `id:${dataID};request-id:${xRequestId};ts:${ts}`;
+
+	const hmac = crypto.createHmac('sha256', SECRET_KEY_MP);
+	hmac.update(manifest);
+	const sha = hmac.digest('hex');
+
+	if (sha !== hash) return error(404, { message: 'No autorizado' });
 
 	if (body.type === 'payment') {
-		console.log('Paso el payment y se ejecutara el fetch para obtener la informacion del payment');
-
 		const res = await fetch(`https://api.mercadopago.com/v1/payments/${body.data.id}`, {
 			method: 'GET',
 			headers: {
@@ -26,8 +49,6 @@ export const POST: RequestHandler = async ({ url, request }) => {
 		});
 
 		const paymentData: PaymentData = await res.json();
-
-		console.log({ paymentData });
 
 		if (paymentData.status === 'approved' && paymentData.status_detail === 'accredited') {
 			const orderId = paymentData.metadata.order_id;
