@@ -38,9 +38,10 @@
 </svelte:head>
 
 <div
-	class="h-[400px] bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870706/neworld/c7s3zu7rmy3ub5u9ixkp.png')] dark:bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870707/neworld/ggq37w7uxaw2ztyuxt0y.png')] bg-cover bg-center bg-no-repeat"
+	class="h-[350px] sm:h-[400px] bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870706/neworld/c7s3zu7rmy3ub5u9ixkp.png')]
+	dark:bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870707/neworld/ggq37w7uxaw2ztyuxt0y.png')] bg-cover bg-center bg-no-repeat"
 >
-	<div class="flex flex-col items-center justify-center h-full z-10 relative">
+	<div class="flex flex-col items-center justify-center mt-5 h-full z-10 relative">
 		<img src="/images/logo/logo.png" alt="logo" class="aspect-square w-[200px] h-auto" />
 		<h1 class="text-3xl font-bold">Neworld</h1>
 		<p class="text-lg mt-2">Descubre el nuevo mundo</p>

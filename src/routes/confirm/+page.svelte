@@ -207,25 +207,37 @@
 			<div class="rounded-t-lg py-2 bg-primary/30">
 				<p class="text-center text-sm font-semibold">Información de envío</p>
 			</div>
-			<div class="grid grid-cols-4 gap-4 rounded-b-lg shadow-md bg-primary/5 px-2 py-1">
-				<div class="flex flex-col gap-1">
-					<p class="text-sm font-semibold">Nombre:</p>
-					<p class="text-sm font-semibold">Apellidos:</p>
-					<p class="text-sm font-semibold">Email:</p>
-					<p class="text-sm font-semibold">Telefono:</p>
-					<p class="text-sm font-semibold">Direccion:</p>
-					<p class="text-sm font-semibold">Provincia:</p>
-					<p class="text-sm font-semibold">Localidad:</p>
-					<p class="text-sm font-semibold">CP:</p>
-				</div>
-				<div class="col-span-3 flex flex-col gap-1">
+			<div class="gap-4 rounded-b-lg shadow-md bg-primary/5 px-2 py-1">
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Nombre:</p>
 					<p class="text-sm font-light">{data.userInfo?.name}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Apellidos:</p>
 					<p class="text-sm font-light">{data.userInfo?.lastname}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Email:</p>
 					<p class="text-sm font-light">{data.userInfo?.email}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Telefono:</p>
 					<p class="text-sm font-light">{data.userInfo?.phone}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Direccion:</p>
 					<p class="text-sm font-light">{data.userInfo?.address}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Provincia:</p>
 					<p class="text-sm font-light">{data.userInfo?.province}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">Localidad:</p>
 					<p class="text-sm font-light">{data.userInfo?.locality}</p>
+				</div>
+				<div class="flex flex-row gap-1">
+					<p class="text-sm font-semibold w-20 sm:w-24">CP:</p>
 					<p class="text-sm font-light">{data.userInfo?.zipCode}</p>
 				</div>
 			</div>

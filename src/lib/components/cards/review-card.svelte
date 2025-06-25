@@ -9,33 +9,21 @@
 	const { review }: Props = $props();
 </script>
 
-<Card.Root>
-	<Card.Header>
+<Card.Root class="p-1">
+	<Card.Header class="p-1">
 		<Card.Title class="flex flex-row justify-between items-center">
 			<p>{review.name}</p>
-			<div class="flex items-center mb-2">
+		</Card.Title>
+		<Card.Description>
+			<div class="flex items-center">
 				{#each Array(review.rating) as _, i}
-					<Star class="text-primary" />
+					<Star class="text-primary w-5 h-auto" />
 				{/each}
 			</div>
-		</Card.Title>
+		</Card.Description>
 		<Card.Action></Card.Action>
 	</Card.Header>
-	<Card.Content>
+	<Card.Content class="p-1">
 		{review.comment}
 	</Card.Content>
 </Card.Root>
-
-<!-- <li class="bg-white shadow-md rounded-lg p-4 flex flex-col">
-	<div class="flex justify-between items-center">
-		<p>{review.name}</p>
-		<div class="flex items-center mb-2">
-			{#each Array(review.rating) as _, i}
-				<Star class="text-yellow-500" />
-			{/each}
-		</div>
-	</div>
-	<p class="text-sm text-neutral-700">
-		{review.comment}
-	</p>
-</li> -->
