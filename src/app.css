@@ -166,15 +166,6 @@
     @apply w-full max-w-[1200px] mx-auto flex flex-col px-4 md:px-6 mt-16
   }
 
-  /* .input-outline {
-		@apply p-2 rounded-md text-sm outline-1 outline-neutral-300 focus:outline-2 focus:outline-blue-400 bg-white
-	}
-
-
-  .text-error {
-    @apply text-red-400 text-xs font-light
-  }
-
   .markdown-preview h1 {
 			@apply mt-4 mb-2 border-b-2 pb-2 text-2xl font-bold;
   }
@@ -248,5 +239,5 @@
 
   .markdown-preview td {
     @apply border px-4 py-2;
-  } */
+  }
 }
