@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { formatPrice } from '@/lib/utils/formatters.js';
+	import { formatPrice } from '$lib/utils/formatters.js';
 	import { BanknoteArrowDown, CircleArrowRight, Loader, ShieldCheck } from '@lucide/svelte';
 	import { DiscountType } from '@prisma/client';
 	import type { PageProps } from './$types';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
 
 	const { data }: PageProps = $props();
 
@@ -32,48 +35,57 @@
 	let totalAmount = $derived(subTotalAmount);
 
 	const handleValidateCoupon = async (event: Event) => {
+		isLoading['coupon'] = true;
 		event.preventDefault();
 
-		const response = await fetch('api/validate-coupon', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ code: coupon })
-		});
+		try {
+			const response = await fetch('api/validate-coupon', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ code: coupon })
+			});
 
-		const data: { valid: boolean; discountValue: number; discountType: DiscountType } =
-			await response.json();
+			const data: { valid: boolean; discountValue: number; discountType: DiscountType } =
+				await response.json();
 
-		if (!data.valid) {
-			invalidCoupon = true;
-			coupon = '';
-			validCoupon = false;
-			setTimeout(() => {
-				invalidCoupon = false;
-			}, 2000);
-			return;
-		}
+			if (!data.valid) {
+				invalidCoupon = true;
+				coupon = '';
+				validCoupon = false;
+				setTimeout(() => {
+					invalidCoupon = false;
+				}, 2000);
+				return;
+			}
 
-		if (data.discountType === 'PERCENTAGE') {
-			discountAmount = -subTotalAmount * (data.discountValue / 100);
-			totalAmount = totalAmount + discountAmount;
-			isEnteringCoupon = false;
-			validCoupon = true;
-			return;
-		}
+			if (data.discountType === 'PERCENTAGE') {
+				discountAmount = -subTotalAmount * (data.discountValue / 100);
+				totalAmount = totalAmount + discountAmount;
+				isEnteringCoupon = false;
+				validCoupon = true;
+				return;
+			}
 
-		if (data.discountType === 'FIXED_AMOUNT') {
-			discountAmount = -data.discountValue;
-			totalAmount = totalAmount + discountAmount;
-			isEnteringCoupon = false;
-			validCoupon = true;
-			return;
+			if (data.discountType === 'FIXED_AMOUNT') {
+				discountAmount = -data.discountValue;
+				totalAmount = totalAmount + discountAmount;
+				isEnteringCoupon = false;
+				validCoupon = true;
+				return;
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			isLoading['coupon'] = false;
 		}
 	};
 
-	let isLoading = $state(false);
-	let isLoadingTransfer = $state(false);
+	let isLoading = $state<Record<string, boolean>>({});
+	// let isLoadingCoupon = $state(false)
+	// let isLoading = $state(false);
+	// let isLoadingTransfer = $state(false);
 
 	const cardImages = [
 		'https://res.cloudinary.com/difikt7so/image/upload/v1748530294/neworld/bi9h6g5y4e6rrivxr4v2.png',
@@ -84,10 +96,10 @@
 </script>
 
 <div
-	class="absolute w-full py-0.5 flex flex-row gap-2 justify-center items-center bg-emerald-500/80 mt-14"
+	class="absolute w-full py-0.5 flex flex-row gap-2 justify-center items-center bg-primary mt-14"
 >
 	<p class="font-semibold text-xs">COMPRA SEGURA</p>
-	<ShieldCheck class="text-emerald-800" />
+	<ShieldCheck />
 	<p class="text-xs">100% PROTEGIDO</p>
 </div>
 <div class="page-container mt-24">
@@ -122,52 +134,53 @@
 						{formatPrice(totalAmount)}
 					</span>
 				</div>
-				<button
-					type="button"
-					onclick={() => {
-						isEnteringCoupon = !isEnteringCoupon;
-					}}
-					class="rounded-md py-1 border-1 shadow-md border-neutral-300 text-center text-sm bg-white mt-2 hover:cursor-pointer"
-					aria-label="cupon de descuento"
-					hidden={isEnteringCoupon || validCoupon}
-				>
-					Agregar cupón de descuento
-				</button>
-				<form
-					class="flex flex-row gap-2 mt-2"
-					hidden={!isEnteringCoupon}
-					onsubmit={handleValidateCoupon}
-				>
-					<input
-						type="text"
-						name="coupon"
-						placeholder="Ingrese el cupon"
-						bind:value={coupon}
-						class="w-full input-outline text-sm"
-					/>
-					<button
-						type="submit"
-						aria-label="validar cupon"
-						class="bg-blue-300 flex justify-center items-center px-2 rounded-md shadow-md hover:cursor-pointer"
+				<div class="w-full mt-2">
+					<Button
+						type="button"
+						onclick={() => {
+							isEnteringCoupon = !isEnteringCoupon;
+						}}
+						class="w-full cursor-pointer border border-primary"
+						variant="secondary"
+						aria-label="cupon de descuento"
+						hidden={isEnteringCoupon || validCoupon}
 					>
-						<CircleArrowRight class="text-neutral-800" />
-					</button>
-				</form>
-				{#if invalidCoupon}
-					<span class="text-red-700 bg-red-200 w-ful mt-1 text-center text-sm rounded-md">
-						Cupón invalido
-					</span>
-				{/if}
+						Agregar cupón de descuento
+					</Button>
+					<form
+						class="flex flex-row gap-2"
+						hidden={!isEnteringCoupon}
+						onsubmit={handleValidateCoupon}
+					>
+						<Input
+							type="text"
+							name="coupon"
+							placeholder="Ingrese el cupon"
+							bind:value={coupon}
+							class="w-full text-sm"
+						/>
+						<Button type="submit" aria-label="validar cupon">
+							{#if isLoading['coupon']}
+								<Loader class="animate-spin" />
+							{:else}
+								<CircleArrowRight />
+							{/if}
+						</Button>
+					</form>
+					{#if invalidCoupon}
+						<Badge variant="destructive" class="w-full mt-1">Cupón invalido</Badge>
+					{/if}
+				</div>
 			</div>
 			<div class="flex flex-col gap-4 h-fit">
 				{#each data.cart!.CartItem as item (item.productId)}
 					<div
-						class="flex flex-row gap-2 md:gap-4 pr-1 items-center rounded-lg shadow bg-blue-200/50"
+						class="flex flex-row gap-2 md:gap-4 p-1 items-center rounded-lg shadow bg-primary/20"
 					>
 						<img
 							src={item.product.images[0]}
 							alt={item.product.description}
-							class="w-[120px] h-auto aspect-square rounded-l-lg"
+							class="w-[120px] h-auto aspect-square rounded-md"
 						/>
 						<div class="flex flex-col gap-1">
 							<h3 class="text-sm font-medium">{item.product.name}</h3>
@@ -191,10 +204,10 @@
 			</div>
 		</div>
 		<div class="flex flex-col">
-			<div class="rounded-t-lg py-2 bg-blue-300">
+			<div class="rounded-t-lg py-2 bg-primary/30">
 				<p class="text-center text-sm font-semibold">Información de envío</p>
 			</div>
-			<div class="grid grid-cols-4 gap-4 rounded-b-lg shadow-md bg-white px-2 py-1">
+			<div class="grid grid-cols-4 gap-4 rounded-b-lg shadow-md bg-primary/5 px-2 py-1">
 				<div class="flex flex-col gap-1">
 					<p class="text-sm font-semibold">Nombre:</p>
 					<p class="text-sm font-semibold">Apellidos:</p>
@@ -222,15 +235,15 @@
 	<div class="w-full flex flex-col md:flex-row gap-2 items-start justify-center mt-4">
 		<form
 			method="POST"
-			action="?/createOrderWithTransfer"
+			action="?/createOrderByTransfer"
 			class="w-full"
 			use:enhance={({ formData }) => {
 				if (validCoupon && coupon.length > 0) {
 					formData.append('coupon', coupon);
 				}
-				isLoadingTransfer = true;
+				isLoading['order-transfer'] = true;
 				return async ({ result, update }) => {
-					isLoadingTransfer = false;
+					isLoading['order-transfer'] = false;
 					if (result.type === 'success') {
 						const data = result.data as { location: string };
 						await update({ invalidateAll: true, reset: false });
@@ -239,13 +252,8 @@
 				};
 			}}
 		>
-			<button
-				type="submit"
-				class="w-full rounded-md shadow-md bg-blue-300 hover:bg-blue-400 hover:shadow-lg py-2
-					font-semibold hover:cursor-pointer flex flex-row items-center justify-center gap-2"
-				disabled={isLoadingTransfer}
-			>
-				{#if isLoadingTransfer}
+			<Button type="submit" class="w-full cursor-pointer" disabled={isLoading['order-transfer']}>
+				{#if isLoading['order-transfer']}
 					<Loader class="animate-spin" />
 				{:else}
 					<BanknoteArrowDown class="" />
@@ -254,7 +262,7 @@
 						<span class="text-xs font-medium pt-0.5">(5% de descuento)</span>
 					</div>
 				{/if}
-			</button>
+			</Button>
 		</form>
 
 		<div class="flex flex-col w-full">
@@ -265,9 +273,9 @@
 					if (validCoupon && coupon.length > 0) {
 						formData.append('coupon', coupon);
 					}
-					isLoading = true;
+					isLoading['order'] = true;
 					return async ({ result }) => {
-						isLoading = false;
+						isLoading['order'] = false;
 						if (result.type === 'success') {
 							const data = result.data as { orderId: string; initPoint: string };
 							const initPoint = data.initPoint;
@@ -279,16 +287,16 @@
 				<button
 					type="submit"
 					class={`rounded-lg justify-center flex flex-row items-center py-1 w-full border-1 
-				 ${isLoading ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-500'} shadow-md  hover:shadow-lg`}
-					disabled={isLoading}
+				 ${isLoading['order'] ? 'bg-yellow-400 opacity-50' : 'bg-yellow-400 hover:cursor-pointer hover:bg-yellow-300'} shadow-md  hover:shadow-lg`}
+					disabled={isLoading['order']}
 				>
-					{#if isLoading}
+					{#if isLoading['order']}
 						<Loader class="animate-spin" />
 					{:else}
 						<img
 							src="/images/logo/mercado-pago-logo.png"
 							alt="mercado-pago-logo"
-							class="w-[110px] h-auto"
+							class="w-[100px] h-auto"
 						/>
 					{/if}
 				</button>

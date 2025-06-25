@@ -42,7 +42,7 @@
 			<Button
 				{...props}
 				variant="outline"
-				class="w-full justify-between bg-white rounded-md px-2 border-[1px] border-neutral-300"
+				class="flex justify-between"
 				role="combobox"
 				aria-expanded={open}
 			>

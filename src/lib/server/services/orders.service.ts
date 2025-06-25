@@ -5,7 +5,7 @@ import { PUBLIC_BASE_URL } from '$env/static/public';
 
 import { z } from 'zod';
 import prisma from '$lib/prisma';
-import { OrderSchema } from '@/lib/schemas/order.schema';
+import { OrderSchema } from '$lib/schemas/order.schema';
 
 const client = new MercadoPagoConfig({ accessToken: ACCESS_TOKEN_MP });
 const preference = new Preference(client);

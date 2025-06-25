@@ -1,4 +1,4 @@
-import { validCoupon } from '@/lib/server/services/valid-coupon.service';
+import { validCoupon } from '$lib/server/services/valid-coupon.service';
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { z } from 'zod';
 

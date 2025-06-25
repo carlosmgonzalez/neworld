@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { Loader, Minus, Plus } from '@lucide/svelte';
 	import type { PageProps } from './$types';
-	import Carousel from '@/components/ui/Carousel.svelte';
-	import { formatPrice } from '@/lib/utils/formatters';
+	import Carousel from '$lib/components/common/carousel.svelte';
+	import { formatPrice } from '$lib/utils/formatters';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
-	import Separator from '@/lib/components/ui/separator/separator.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import { marked } from 'marked';
-	import ToastSuccessfullyCart from '@/components/ui/toast/toast-successfully-cart.svelte';
+	import ToastSuccessfullyCart from '$lib/components/toast/toast-successfully-cart.svelte';
 	import { enhance } from '$app/forms';
-	import ReviewsCard from '@/components/ui/ReviewsCard.svelte';
+	import ReviewsCard from '$lib/components/cards/review-card.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	const { data }: PageProps = $props();
 
@@ -50,20 +51,21 @@
 			/>
 			<div class="w-full h-full flex flex-col justify-center items-center">
 				<div
-					class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-blue-200/50 backdrop-blur-3xl md:self-start"
+					class="w-full flex flex-col px-8 py-4 rounded-lg shadow-lg bg-primary/20 backdrop-blur-3xl md:self-start"
 				>
 					<div class="flex flex-col md:flex-row justify-between items-start w-full">
 						<h3 class="font-semibold text-xl md:text-2xl">{data.product.name}</h3>
 					</div>
 					<p class="text-sm font-light">{data.product.smallDescription}</p>
 					{#if data.product!.stock > 0}
-						<p class="text-sm font-semibold text-blue-900">En stock</p>
+						<p class="text-sm font-semibold text-primary">En stock</p>
 
 						<div
-							class="flex justify-between items-center bg-white rounded-lg px-2 py-1 w-fit gap-5 mt-4"
+							class="flex justify-between items-center bg-primary/30 rounded-lg w-fit gap-5 mt-4"
 						>
-							<button
-								class="cursor-pointer"
+							<Button
+								class="cursor-pointer w-8 h-auto"
+								variant="ghost"
 								onclick={() => {
 									if (quantity > 1) {
 										quantity -= 1;
@@ -71,13 +73,13 @@
 								}}
 							>
 								<Minus />
-							</button>
-							<span
-								class="flex justify-center items-center px-2 bg-neutral-200/80 backdrop-blur-3xl rounded-lg"
+							</Button>
+							<span class="flex justify-center items-center px-2 bg-primary/40 rounded-sm"
 								>{quantity}</span
 							>
-							<button
-								class="cursor-pointer"
+							<Button
+								class="cursor-pointer w-8 h-auto"
+								variant="ghost"
 								onclick={() => {
 									if (quantity < data.product!.stock) {
 										quantity += 1;
@@ -85,7 +87,7 @@
 								}}
 							>
 								<Plus />
-							</button>
+							</Button>
 						</div>
 						<div class="flex flex-col sm:flex-row justify-between items-start gap-2 mt-4">
 							<div class="flex flex-col w-full">
@@ -99,12 +101,7 @@
 												await update({ invalidateAll: true, reset: false });
 												toast.success(ToastSuccessfullyCart, {
 													position: 'top-center',
-													componentProps: { description: data.product!.name },
-													action: {
-														label: 'Ir al carrito',
-														onClick: () => goto('/cart')
-													},
-													actionButtonStyle: 'background-color: #2b7fff;'
+													componentProps: { description: data.product!.name }
 												});
 											}
 											isLoading = false;
@@ -114,17 +111,13 @@
 								>
 									<input type="text" name="productId" value={data.product.id} hidden />
 									<input type="text" name="quantity" bind:value={quantity} hidden />
-									<button
-										type="submit"
-										class="bg-blue-500 flex flex-row justify-center w-full text-white font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-300"
-										disabled={isLoading}
-									>
+									<Button type="submit" class="w-full cursor-pointer" disabled={isLoading}>
 										{#if isLoading}
 											<Loader size={20} class="animate-spin" />
 										{:else}
 											Agregar al carrito
 										{/if}
-									</button>
+									</Button>
 								</form>
 								<p class="font-light text-center">
 									Precio final
@@ -132,20 +125,20 @@
 									(Envío gratis)
 								</p>
 							</div>
-							<Separator class="sm:hidden bg-neutral-300 my-1" />
 							{#if data.product.linkML}
+								<Separator class="sm:hidden" />
 								<div class="flex flex-col w-full">
 									<a
 										href={data.product.linkML}
 										type="button"
-										class="flex itmes-center justify-center bg-yellow-400 w-full text-white font-semibold px-4 py-1.5 rounded-lg cursor-pointer hover:bg-yellow-500 transition-colors duration-300"
+										class="flex itmes-center justify-center bg-yellow-400 w-full text-white font-semibold px-4 py-1 rounded-lg cursor-pointer hover:bg-yellow-300 transition-colors duration-300"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
 										<img
 											alt="mercado-libre"
 											src="/images/logo/mercado-libre-logo.png"
-											class="w-30 h-auto"
+											class="w-28"
 										/>
 									</a>
 									{#if data.product.priceML}
@@ -159,9 +152,8 @@
 							{/if}
 						</div>
 					{:else}
-						<p class="font-semibold text-sm text-red-900">Sin stock</p>
+						<p class="font-semibold text-sm text-destructive">Sin stock</p>
 					{/if}
-					<div class="h-[1px] w-full bg-neutral-200"></div>
 				</div>
 			</div>
 		</div>

@@ -3,7 +3,7 @@ import { PUBLIC_BASE_URL } from '$env/static/public';
 import { ACCESS_TOKEN_MP, SECRET_KEY_MP } from '$env/static/private';
 import prisma from '$lib/prisma';
 import type { PaymentData } from '$lib/interfaces/payment-data.interface';
-import { sendNewEmail } from '@/lib/resend/send-new-mail';
+import { sendNewEmail } from '$lib/resend/send-new-mail';
 import crypto from 'node:crypto';
 
 export const POST: RequestHandler = async ({ url, request }) => {

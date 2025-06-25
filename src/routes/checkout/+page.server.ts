@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import prisma from '$lib/prisma';
 import { error, type Actions } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 

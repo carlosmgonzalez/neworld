@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Products from '../components/Products.svelte';
 	import type { PageProps } from './$types';
 	const { data }: PageProps = $props();
+	import ProductCard from '$lib/components/cards/product-card.svelte';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 </script>
 
@@ -37,28 +37,28 @@
 	/>
 </svelte:head>
 
-<!-- <div class="h-[600px] bg-[url('/images/logo/banner.jpg')] bg-cover bg-center bg-no-repeat">
-	<div class="flex flex-col items-center justify-center h-full">
+<div
+	class="h-[400px] bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870706/neworld/c7s3zu7rmy3ub5u9ixkp.png')] dark:bg-[url('https://res.cloudinary.com/difikt7so/image/upload/v1750870707/neworld/ggq37w7uxaw2ztyuxt0y.png')] bg-cover bg-center bg-no-repeat"
+>
+	<div class="flex flex-col items-center justify-center h-full z-10 relative">
 		<img src="/images/logo/logo.png" alt="logo" class="aspect-square w-[200px] h-auto" />
-		<h1 class="text-4xl font-bold text-white">Neworld</h1>
-		<p class="text-lg text-white mt-2">Descubre el nuevo mundo</p>
+		<h1 class="text-3xl font-bold">Neworld</h1>
+		<p class="text-lg mt-2">Descubre el nuevo mundo</p>
 	</div>
-</div> -->
-<div class="relative h-[300px] md:h-[450px] overflow-hidden">
-	<video
-		class="absolute top-14 left-0 w-full h-full object-cover z-0"
-		src="https://res.cloudinary.com/difikt7so/video/upload/v1748374945/neworld/wpkhlhnr7c8oya3tkh23.mp4"
-		autoplay
-		muted
-		playsinline
-	></video>
-	<!-- <div class="flex flex-col items-center justify-center h-full relative z-10">
+</div>
+<div class="page-container mt-4">
+	<h1 class="text-lg font-semibold mb-2">Productos</h1>
+	<section>
+		<div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+			{#each data.products as product (product.id)}
+				<ProductCard {product} />
+			{/each}
+		</div>
+	</section>
+</div>
+
+<!-- <div class="flex flex-col items-center justify-center h-full">
 		<img src="/images/logo/logo.png" alt="logo" class="aspect-square w-[200px] h-auto" />
 		<h1 class="text-4xl font-bold text-white">Neworld</h1>
 		<p class="text-lg text-white mt-2">Descubre el nuevo mundo</p>
 	</div> -->
-</div>
-<div class="h-[20px]"></div>
-<div class="flex-1 flex flex-col m-auto w-full max-w-[1200px] px-4">
-	<Products products={data.products} />
-</div>

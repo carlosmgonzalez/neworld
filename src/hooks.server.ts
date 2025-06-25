@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth/auth';
+import { auth } from '$lib/auth/auth';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import prisma from './lib/prisma';

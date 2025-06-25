@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
-	import { formatPrice } from '@/lib/utils/formatters.js';
+	import { formatPrice } from '$lib/utils/formatters.js';
+	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import { Loader, Minus, Plus, ShoppingCart, X } from '@lucide/svelte';
 
 	const { data } = $props();
@@ -21,15 +22,17 @@
 		{:else}
 			<div class="flex flex-col md:col-span-2 gap-4 h-fit">
 				{#each data.cart!.CartItem as item (item.productId)}
-					<div class="flex flex-row bg-blue-200/50 rounded-lg gap-2 items-center">
+					<div class="flex flex-row bg-primary/20 rounded-lg gap-2 items-center p-1">
 						<img
 							src={item.product.images[0]}
 							alt={item.product.smallDescription}
-							class="w-[160px] h-auto aspect-square rounded-l-lg"
+							class="w-[160px] h-auto aspect-square rounded-md"
 						/>
 						<div class="w-full flex flex-col justify-between gap-1 pr-2 md:flex-row md:gap-4">
 							<div class="flex flex-col gap-1 md:gap-4">
-								<a href={`/product/${item.product.id}`}>{item.product?.name}</a>
+								<a href={`/product/${item.product.id}`} class="font-semibold underline"
+									>{item.product?.name}</a
+								>
 								<p class="text-sm font-light hidden sm:block">
 									{item.product.smallDescription}
 								</p>
@@ -39,7 +42,7 @@
 							</div>
 							<div class="flex flex-row gap-2 items-center">
 								<div
-									class="flex justify-center items-center gap-2 shadow-md bg-white rounded-lg px-2 py-1 h-fit"
+									class="flex justify-center items-center gap-2 shadow-md bg-primary/30 rounded-lg h-fit"
 								>
 									<form
 										method="POST"
@@ -53,17 +56,18 @@
 											};
 										}}
 									>
-										<button
+										<input type="text" name="productId" value={item.productId} hidden />
+										<Button
 											type="submit"
-											class="cursor-pointer"
+											class="cursor-pointer w-8 h-auto"
+											variant="ghost"
 											disabled={isLoading[item.productId]}
 										>
-											<input type="text" name="productId" value={item.productId} hidden />
 											<Minus size={16} />
-										</button>
+										</Button>
 									</form>
 									<span
-										class="flex justify-center items-center px-2 bg-neutral-200/80 backdrop-blur-3xl rounded-lg"
+										class="flex justify-center items-center px-2 bg-primary/40 backdrop-blur-3xl rounded-lg"
 										>{item.quantity}</span
 									>
 									<form
@@ -79,14 +83,15 @@
 											};
 										}}
 									>
-										<button
+										<input type="text" name="productId" value={item.productId} hidden />
+										<Button
 											type="submit"
-											class="cursor-pointer"
+											class="cursor-pointer w-8 h-auto"
+											variant="ghost"
 											disabled={isLoading[item.productId]}
 										>
-											<input type="text" name="productId" value={item.productId} hidden />
 											<Plus size={16} />
-										</button>
+										</Button>
 									</form>
 								</div>
 								<form
@@ -100,25 +105,26 @@
 										};
 									}}
 								>
-									<button
+									<input type="text" name="productId" value={item.productId} hidden />
+									<Button
 										type="submit"
-										class="cursor-pointer text-red-700"
+										class="cursor-pointer w-8 h-auto"
+										variant="ghost"
 										disabled={isLoading[item.productId]}
 									>
-										<input type="text" name="productId" value={item.productId} hidden />
 										{#if isLoading[item.productId]}
-											<Loader size={16} class="animate-spin" />
+											<Loader size={20} class="animate-spin text-destructive" />
 										{:else}
-											<X size={16} />
+											<X size={20} class="text-destructive" />
 										{/if}
-									</button>
+									</Button>
 								</form>
 							</div>
 						</div>
 					</div>
 				{/each}
 			</div>
-			<div class="flex flex-col rounded-lg shadow-md p-4 bg-white gap-2 h-fit">
+			<div class="flex flex-col rounded-lg shadow-md bg-primary/5 p-4 gap-2 h-fit">
 				<h3 class="font-medium">Resumen de compra</h3>
 				<div class="flex justify-between items-center">
 					<p class="font-light">Total:</p>
@@ -131,12 +137,7 @@
 						)}
 					</p>
 				</div>
-				<a
-					href="/checkout"
-					class="bg-blue-500 rounded-lg text-white text-center px-4 py-2 mt-2 hover:bg-blue-600 transition-colors duration-300"
-				>
-					Iniciar compra
-				</a>
+				<a href="/checkout" class={buttonVariants({ variant: 'default' })}> Iniciar compra </a>
 			</div>
 		{/if}
 	</div>

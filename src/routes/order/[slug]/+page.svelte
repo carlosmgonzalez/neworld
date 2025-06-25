@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatPrice } from '@/lib/utils/formatters';
+	import { formatPrice } from '$lib/utils/formatters';
 	import type { PageProps } from './$types';
 	import {
 		BanknoteArrowDown,
@@ -16,7 +16,7 @@
 <div class="page-container">
 	{#if data.ok}
 		<div
-			class="mx-auto flex flex-row items-center justify-center py-2 gap-1 bg-blue-300 w-full rounded-md shadow-md"
+			class="mx-auto flex flex-row items-center justify-center py-2 gap-1 bg-primary/30 w-full rounded-md shadow-md"
 		>
 			<div class="flex flex-col items-center md:flex-row md:items-end gap-1">
 				<p class="text-xl">Gracias por tu compra</p>
@@ -25,8 +25,8 @@
 		</div>
 
 		{#if data.order!.byTransfer && data.order!.status === 'PENDING'}
-			<div class="flex flex-col rounded-md shadow-md mt-5 bg-white">
-				<p class="font-semibold text-center w-full bg-blue-300 rounded-t-md py-1">
+			<div class="flex flex-col rounded-md shadow-md mt-5 bg-primary/5">
+				<p class="font-semibold text-center w-full bg-primary/30 rounded-t-md py-1">
 					Información de transferencia
 				</p>
 				<div class="flex flex-col px-3 py-1">
@@ -58,8 +58,8 @@
 		{/if}
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-2 mt-5">
-			<div class="bg-white rounded-lg shadow-lg">
-				<p class="font-semibold text-center w-full bg-blue-300 rounded-t-md py-1">Productos</p>
+			<div class="bg-primary/5 rounded-lg shadow-lg">
+				<p class="font-semibold text-center w-full bg-primary/30 rounded-t-md py-1">Productos</p>
 				{#each data.order!.OrderItem as product}
 					<div class="flex flex-row gap-2 p-2 items-center">
 						<img src={product.images[0]} alt="" class="w-[130px] h-auto rounded-lg shadow-md" />
@@ -79,8 +79,8 @@
 				{/each}
 			</div>
 
-			<div class="bg-white shadow-md rounded-md pb-2">
-				<p class="font-semibold mb-2 text-center w-full rounded-t-md py-1 bg-blue-300">
+			<div class="bg-primary/5 shadow-md rounded-md pb-2">
+				<p class="font-semibold mb-2 text-center w-full rounded-t-md py-1 bg-primary/30">
 					Información de envío
 				</p>
 				<div class="flex flex-col gap-0.5 px-3">
@@ -97,7 +97,7 @@
 
 		<div class="flex flex-col md:flex-row gap-2 mt-2">
 			<div
-				class="w-full bg-green-300 rounded-lg p-3 shadow-md flex flex-row gap-1 items-center justify-center"
+				class="w-full bg-green-300 dark:bg-green-800 rounded-lg p-3 shadow-md flex flex-row gap-1 items-center justify-center"
 			>
 				{#if data.order!.byTransfer && data.order!.paid}
 					<p class="font-light">Total pagado</p>
@@ -109,29 +109,31 @@
 					<p class="font-light">Total pagado</p>
 				{/if}
 				<span class="font-semibold">{formatPrice(data.order!.totalPrice)}</span>
-				<BanknoteArrowDown class="text-green-800" />
+				<BanknoteArrowDown />
 			</div>
 			<div
-				class="w-full bg-blue-300 rounded-lg p-3 shadow-md flex flex-col sm:flex-row gap-1 items-center justify-center"
+				class="w-full bg-primary rounded-lg p-3 shadow-md flex flex-col sm:flex-row gap-1 items-center justify-center"
 			>
 				<p class="font-light">Estado del envío</p>
-				{#if data.order!.status === 'PAID'}
-					<span class="font-semibold">EN PROCESO</span>
-					<PackageSearch class="text-blue-800" />
-				{:else if data.order!.status === 'PACKING'}
-					<span class="font-semibold">EMPACANDO</span>
-					<Package class="text-blue-800" />
-				{:else if data.order!.status === 'SHIPPED'}
-					<span class="font-semibold">EN CAMINO</span>
-					<Truck class="text-blue-800" />
-				{:else if data.order!.status === 'DELIVERED'}
-					<span class="font-semibold">ENTREGADO</span>
-					<Handshake class="text-blue-800" />
-				{:else if data.order!.status === 'PENDING' && data.order!.byTransfer}
-					<span class="font-semibold">TRANSFERENCIA PENDIENTE</span>
-				{:else if data.order!.status === 'PENDING'}
-					<span class="font-semibold">ORDEN NO PAGADA</span>
-				{/if}
+				<div class="flex flex-row gap-2">
+					{#if data.order!.status === 'PAID'}
+						<span class="font-semibold">EN PROCESO</span>
+						<PackageSearch />
+					{:else if data.order!.status === 'PACKING'}
+						<span class="font-semibold">EMPACANDO</span>
+						<Package />
+					{:else if data.order!.status === 'SHIPPED'}
+						<span class="font-semibold">EN CAMINO</span>
+						<Truck />
+					{:else if data.order!.status === 'DELIVERED'}
+						<span class="font-semibold">ENTREGADO</span>
+						<Handshake />
+					{:else if data.order!.status === 'PENDING' && data.order!.byTransfer}
+						<span class="font-semibold">TRANSFERENCIA PENDIENTE</span>
+					{:else if data.order!.status === 'PENDING'}
+						<span class="font-semibold">ORDEN NO PAGADA</span>
+					{/if}
+				</div>
 			</div>
 		</div>
 		<span class=" font-light text-center mt-5">

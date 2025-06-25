@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { provincesDb } from '@/lib/database/provinces.db';
-	import { localidadesDb } from '@/lib/database/localities.db';
-	import Selector from '@/components/ui/Selector.svelte';
+	import { provincesDb } from '$lib/database/provinces.db';
+	import { localidadesDb } from '$lib/database/localities.db';
+	import Selector from '$lib/components/common/selector.svelte';
 	import { enhance } from '$app/forms';
 	import type { PageProps } from './$types';
 	import { Loader } from '@lucide/svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	const { data }: PageProps = $props();
 	let error = $state(false);
@@ -64,39 +66,36 @@
 				<p>Datos personales:</p>
 				<div class="flex flex-col w-full">
 					<label for="name" class="text-xs text-neutral-600"> Nombre </label>
-					<input
+					<Input
 						type="text"
 						name="name"
 						id="name"
 						bind:value={name}
 						placeholder="Nombre"
-						class="input-outline"
 						required
 					/>
 				</div>
 
 				<div class="flex flex-col w-full">
 					<label for="lastname" class="text-xs text-neutral-600"> Apellido </label>
-					<input
+					<Input
 						type="text"
 						name="lastname"
 						id="lastname"
 						bind:value={lastname}
 						placeholder="Apellido"
-						class="input-outline"
 						required
 					/>
 				</div>
 
 				<div class="flex flex-col w-full">
 					<label for="email" class="text-xs text-neutral-600"> Email </label>
-					<input
+					<Input
 						type="email"
 						name="email"
 						id="email"
 						bind:value={email}
 						placeholder="Correo electrónico"
-						class="input-outline"
 						required
 					/>
 				</div>
@@ -104,28 +103,19 @@
 				<div class="flex flex-row justify-between items-center">
 					<div class="flex flex-col w-[49%]">
 						<label for="phone" class="text-xs text-neutral-600"> Teléfono </label>
-						<input
+						<Input
 							type="tel"
 							name="phone"
 							id="phone"
 							bind:value={phone}
 							placeholder="011-47029302"
-							class="input-outline"
 							required
 						/>
 					</div>
 
 					<div class="flex flex-col w-[49%]">
 						<label for="dni" class="text-xs text-neutral-600"> DNI </label>
-						<input
-							type="tel"
-							name="dni"
-							id="dni"
-							bind:value={dni}
-							placeholder="DNI"
-							class="input-outline"
-							required
-						/>
+						<Input type="tel" name="dni" id="dni" bind:value={dni} placeholder="DNI" required />
 					</div>
 				</div>
 			</div>
@@ -135,25 +125,23 @@
 				<div class="grid grid-cols-4 gap-2">
 					<div class="flex flex-col w-full col-span-3">
 						<label for="addrress" class="text-xs text-neutral-600"> Dirección </label>
-						<input
+						<Input
 							type="text"
 							name="address"
 							id="address"
 							bind:value={address}
 							placeholder="Dirección completa"
-							class="input-outline"
 							required
 						/>
 					</div>
 					<div class="flex flex-col w-full">
 						<label for="department" class="text-xs text-neutral-600"> Dpt </label>
-						<input
+						<Input
 							type="text"
 							name="department"
 							id="department"
 							bind:value={department}
 							placeholder="2B"
-							class="input-outline"
 						/>
 					</div>
 				</div>
@@ -171,13 +159,12 @@
 
 				<div class="flex flex-col w-full">
 					<label for="zipCode" class="text-xs text-neutral-600"> Codigo Postal </label>
-					<input
+					<Input
 						type="text"
 						name="zipCode"
 						id="zipCode"
 						bind:value={zipCode}
 						placeholder="Código postal"
-						class="input-outline"
 						required
 					/>
 				</div>
@@ -188,16 +175,12 @@
 				Debes ingresar todos los datos necesarios
 			</p>
 		{/if}
-		<button
-			type="submit"
-			class="flex flex-row justify-center bg-blue-500 w-full mt-4 text-white rounded-lg px-4 py-2 shadow hover:shadow-md hover:bg-blue-600 hover:cursor-pointer"
-			disabled={isLoading}
-		>
+		<Button type="submit" class="cursor-pointer w-full mt-5" disabled={isLoading}>
 			{#if isLoading}
 				<Loader size={20} class="animate-spin" />
 			{:else}
 				Finalizar el pedido
 			{/if}
-		</button>
+		</Button>
 	</form>
 </div>

@@ -1,9 +1,9 @@
 import prisma from '$lib/prisma';
 import { error, type Actions } from '@sveltejs/kit';
-import preference from '@/lib/mercadopago';
+import preference from '$lib/mercadopago';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 import type { Coupon } from '@prisma/client';
-import { sendNewEmail } from '@/lib/resend/send-new-mail';
+import { sendNewEmail } from '$lib/resend/send-new-mail';
 
 export type CreateOrderActionData = {
 	orderId: string;
@@ -127,12 +127,10 @@ export const actions = {
 			});
 		}
 	},
-	createOrderWithTransfer: async ({ locals, request }) => {
+	createOrderByTransfer: async ({ locals, request }) => {
 		const session = locals.session;
 		const form = await request.formData();
 		const couponCode = form.get('coupon') as string | null;
-
-		console.log('create order with transfer');
 
 		try {
 			const sessionInfo = await prisma.session.findUnique({
